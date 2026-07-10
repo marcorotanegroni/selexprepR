@@ -1,0 +1,10 @@
+This catalog is a snapshot of the curated metadata shipped by the original
+selexprep project, imported during the R migration. It is included as package
+data so discovery is reproducible and works without network access.
+
+The records are derived from public ENA study metadata and are distributed as
+part of this package under its MIT license.
+
+The catalog is metadata only. Before downloading data, use
+inspect_selexprep_accession() to obtain current ENA records and verify that an
+accession is still available.

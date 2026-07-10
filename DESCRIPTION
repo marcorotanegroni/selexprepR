@@ -1,0 +1,36 @@
+Package: selexprep
+Title: Preprocessing Public HT-SELEX Sequencing Data
+Version: 0.99.0
+Authors@R:
+    person(given = "Marco", family = "Rotanegroni",
+           email = "marco.rotanegroni@studenti.unipd.it",
+           role = c("aut", "cre"))
+Description: Provides reproducible preprocessing for high-throughput
+    SELEX sequencing data. Supports primer inference, extraction of random
+    regions, sparse sequence counting across rounds, quality control, and
+    provenance manifests. Public-study discovery and checksum-aware ENA FASTQ
+    download planning are included for reproducible data acquisition.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Depends: R (>= 4.6.0)
+Imports:
+    Biostrings,
+    digest,
+    httr2,
+    jsonlite,
+    Matrix,
+    S4Vectors,
+    SummarizedExperiment
+Suggests:
+    arrow,
+    BiocStyle,
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+biocViews: DataImport, Preprocessing, QualityControl, Sequencing
+Config/testthat/edition: 3
+URL: https://github.com/marcorotanegroni/selexprep
+BugReports: https://github.com/marcorotanegroni/selexprep/issues

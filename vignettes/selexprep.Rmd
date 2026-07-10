@@ -1,0 +1,123 @@
+---
+title: "Preprocessing an HT-SELEX study"
+author: "Marco Rotanegroni"
+date: "`r Sys.Date()`"
+output: BiocStyle::html_document
+vignette: >
+  %\\VignetteIndexEntry{Preprocessing an HT-SELEX study}
+  %\\VignetteEngine{knitr::rmarkdown}
+  %\\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+# Introduction
+
+High-throughput SELEX experiments enrich binding sequences over successive
+rounds, but public deposits commonly expose raw reads without a uniform record
+of primer layout, trimming decisions, or the relationship between rounds.
+`selexprep` provides a reproducible preprocessing layer for this setting. It
+uses `Biostrings` sequence containers, returns a sparse
+`SummarizedExperiment`, and stores its inference, extraction, quality-control,
+and provenance records alongside the assay.
+
+The package complements general FASTQ infrastructure in Bioconductor. Its
+domain-specific contribution is conservative primer inference and a manifest
+that makes the preprocessing decision inspectable rather than implicit.
+The existing `SELEX` package provides a complementary analysis workflow based
+on its own sample annotation model. `selexprep` focuses on raw public-read
+acquisition, primer inference, and a `SummarizedExperiment` output that can be
+used by downstream Bioconductor tooling.
+
+# Installation
+
+```{r installation, eval=FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+}
+BiocManager::install("selexprep")
+```
+
+# A complete in-memory workflow
+
+For a self-contained example, create three synthetic rounds with fixed 5-prime
+and 3-prime constant regions. The variable regions below are distinct so the
+count matrix has a realistic multi-sequence shape.
+
+```{r synthetic-data}
+library(selexprep)
+
+primer_5p <- "GGTAATACGACTCACTATAGGG"
+primer_3p <- "CCATGCATGCATGCATGCAT"
+bases <- c("A", "C", "G", "T")
+
+make_round <- function(round, n = 500L, width = 20L) {
+    variable_regions <- vapply(seq.int(0L, n - 1L), function(index) {
+        paste0(bases[(index %/% 4L^(0L:(width - 1L))) %% 4L + 1L], collapse = "")
+    }, character(1))
+    paste0(primer_5p, variable_regions, primer_3p)
+}
+
+reads_by_round <- stats::setNames(lapply(0:2, make_round), sprintf("round_%02d", 0:2))
+experiment <- run_selexprep(reads_by_round, low_total_reads = 0)
+experiment
+```
+
+The counts assay has one column per SELEX round and one row per recovered
+variable sequence. It is sparse, so conventional SELEX datasets with many
+unobserved sequence-round combinations remain compact.
+
+```{r inspect-counts}
+counts <- SummarizedExperiment::assay(experiment, "counts")
+Matrix::colSums(counts)
+head(SummarizedExperiment::rowData(experiment))
+```
+
+The library report records the inferred constant regions and the decision about
+whether full inserts were recovered. The QC object summarizes every round and
+lists explicit flags instead of silently discarding a concern.
+
+```{r inspect-provenance}
+metadata <- S4Vectors::metadata(experiment)
+metadata$library_report[c("primer_5p", "primer_3p", "extraction_mode", "confidence")]
+metadata$qc$per_round
+metadata$qc$flags
+metadata$manifest$manifest_version
+```
+
+# Reading FASTQ and public metadata
+
+For a raw FASTQ file, read its sequence records into a `BStringSet` and then
+assemble a named list by round before calling `run_selexprep()`.
+
+```{r fastq-input, eval=FALSE}
+reads_by_round <- list(
+    round_00 = read_selexprep_fastq("round_00.fastq.gz"),
+    round_01 = read_selexprep_fastq("round_01.fastq.gz")
+)
+experiment <- run_selexprep(reads_by_round)
+```
+
+The catalog is distributed with the package and can be queried without a
+network connection. ENA inspection and download are separate, so the planned
+files and checksums can be reviewed before any data transfer.
+
+```{r public-data, eval=FALSE}
+selexprep_catalog("FGF-9")
+inspection <- inspect_selexprep_accession("PRJDB19098")
+fetch_selexprep_reads(inspection, "raw/PRJDB19098")
+```
+
+# References
+
+Tuerk C, Gold L (1990). Systematic evolution of ligands by exponential
+enrichment: RNA ligands to bacteriophage T4 DNA polymerase. *Science*,
+249(4968), 505-510. doi:10.1126/science.2200121.
+
+# Session information
+
+```{r session-info}
+sessionInfo()
+```

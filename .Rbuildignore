@@ -1,0 +1,8 @@
+^\.Rhistory$
+^\.RData$
+^\.Ruserdata$
+^\.Rlib$
+^\.Rproj\.user$
+^.*\.Rproj$
+^selexprep_[0-9.-]+\.tar\.gz$
+^upstream-selexprep($|/)

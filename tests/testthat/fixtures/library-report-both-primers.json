@@ -1,0 +1,39 @@
+{
+  "primer_5p": "GGTAATACGACTCACTATAGGG",
+  "primer_3p": "CCATGCATGCATGCATGCAT",
+  "variants_5p": [
+    [
+      "GGTAATACGACTCACTATAGGG",
+      500
+    ]
+  ],
+  "variants_3p": [
+    [
+      "CCATGCATGCATGCATGCAT",
+      500
+    ]
+  ],
+  "known_adapter_hits": {
+    "NEXTERA": 0,
+    "TRUSEQ_R1": 0
+  },
+  "extraction_mode": "BOTH_PRIMERS_SINGLE_READ",
+  "full_insert_recovered": true,
+  "read_source": "R1",
+  "required_action": "NONE",
+  "orientation": "FORWARD",
+  "n_length_mode": 30,
+  "n_length_distribution": {
+    "30": 500
+  },
+  "n_length_confidence": 1.0,
+  "match_rate_5p": 1.0,
+  "match_rate_3p": 1.0,
+  "position_consistency_5p": 1.0,
+  "position_consistency_3p": 1.0,
+  "read_fraction_used_for_inference": 1.0,
+  "sampling_seed": 42,
+  "confidence": 1.0,
+  "status": "HIGH",
+  "failure_reason": null
+}

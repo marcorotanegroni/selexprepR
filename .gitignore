@@ -1,0 +1,8 @@
+.Rhistory
+.RData
+.Ruserdata
+.Rlib/
+.Rproj.user/
+*.Rcheck/
+selexprep_*.tar.gz
+upstream-selexprep/
