@@ -1,0 +1,48 @@
+name: Bioconductor checks
+
+on:
+  push:
+    branches: [codex/ci]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: R 4.6.1 / Bioconductor devel
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.6.1'
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - name: Install package and verification dependencies
+        shell: Rscript {0}
+        run: |
+          install.packages("BiocManager")
+          BiocManager::install(
+            c("BiocCheck", "BiocStyle", "Biostrings", "S4Vectors", "SummarizedExperiment"),
+            ask = FALSE,
+            update = TRUE,
+            version = "devel"
+          )
+          install.packages(c("digest", "httr2", "jsonlite", "knitr", "rmarkdown", "testthat"))
+
+      - name: Build source package
+        run: R CMD build .
+
+      - name: R CMD check
+        run: R CMD check --no-manual selexprep_*.tar.gz
+
+      - name: BiocCheck submission source
+        shell: bash
+        run: |
+          mkdir submission-source
+          tar -xzf selexprep_*.tar.gz -C submission-source
+          Rscript -e 'BiocCheck::BiocCheck("submission-source/selexprep", `quit-with-status` = TRUE)'
