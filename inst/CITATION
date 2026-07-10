@@ -6,5 +6,5 @@ bibentry(
     author = person("Marco", "Rotanegroni"),
     year = "2026",
     note = "R package version 0.99.0",
-    url = "https://github.com/marcorotanegroni/selexprep"
+    url = "https://github.com/marcorotanegroni/selexprepR"
 )

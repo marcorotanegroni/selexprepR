@@ -38,6 +38,7 @@ plan.
 
 ## Development status
 
-This is the `0.99.0` submission candidate for Bioconductor. The original Python
-implementation remains available at
+This is the `0.99.0` submission candidate for Bioconductor. Development of the
+R package is hosted at <https://github.com/marcorotanegroni/selexprepR>; the
+original Python implementation remains available at
 <https://github.com/marcorotanegroni/selexprep>.
