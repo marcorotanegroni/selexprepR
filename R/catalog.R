@@ -17,7 +17,7 @@ selexprep_catalog <- function(query = NULL) {
     if (!is.null(query) && !valid_query) {
         stop("`query` must be NULL or one non-empty string.", call. = FALSE)
     }
-    catalog <- .load_selexprep_public_catalog()
+    catalog <- S4Vectors::DataFrame(.load_selexprep_public_catalog())
     if (!is.null(query)) {
         searchable <- lapply(catalog[, c("bioproject_id", "study_title", "target")],
             function(value) {

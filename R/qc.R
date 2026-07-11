@@ -11,7 +11,7 @@
     if (n <= 0L || !total) {
         return(0)
     }
-    sum(head(sort(reads, decreasing = TRUE), n))/total
+    sum(utils::head(sort(reads, decreasing = TRUE), n))/total
 }
 .singleton_fraction <- function(reads) {
     if (!length(reads)) {
@@ -46,7 +46,7 @@
     if (!length(sequences) || k < 1L || top_sequences < 1L) {
         return(0)
     }
-    selected <- head(order(reads, decreasing = TRUE, method = "radix"), top_sequences)
+    selected <- utils::head(order(reads, decreasing = TRUE, method = "radix"), top_sequences)
     kmer_counts <- numeric()
     for (index in selected) {
         sequence <- toupper(sequences[[index]])
@@ -109,7 +109,7 @@
     if (!length(sequences) || k < 1L) {
         return(character())
     }
-    selected <- head(order(reads, decreasing = TRUE, method = "radix"), top_sequences)
+    selected <- utils::head(order(reads, decreasing = TRUE, method = "radix"), top_sequences)
     kmers <- unlist(lapply(sequences[selected], function(sequence) {
         sequence <- toupper(chartr("U", "T", sequence))
         width <- nchar(sequence)

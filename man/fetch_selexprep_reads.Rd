@@ -43,7 +43,7 @@ inspection or an accession. By default no bytes are transferred; set
 against ENA's MD5 value when one is supplied.
 }
 \examples{
-\dontrun{
+\donttest{
 inspection <- inspect_selexprep_accession('PRJDB19098')
 fetch_selexprep_reads(inspection, 'raw/PRJDB19098')
 }

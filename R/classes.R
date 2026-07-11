@@ -41,15 +41,15 @@
 #' high-dimensional assay remains a standard `SummarizedExperiment` with a
 #' sparse `Matrix` assay.
 #'
+#' @return A description of the result classes and their stable list elements.
+#'
 #' @name selexprep-classes
 #' @aliases selexprep_library_report
 #' @aliases selexprep_extraction
-#' @aliases selexprep_qc
 #' @aliases selexprep_manifest
 #' @aliases selexprep_inspection
 #' @aliases selexprep_fetch_result
 #' @aliases selexprep_read_inputs
-#' @aliases selexprep_demultiplex
 #' @examples
 #' p5 <- 'GGTAATACGACTCACTATAGGG'
 #' p3 <- 'CCATGCATGCATGCATGCAT'

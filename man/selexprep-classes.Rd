@@ -4,12 +4,10 @@
 \alias{selexprep-classes}
 \alias{selexprep_library_report}
 \alias{selexprep_extraction}
-\alias{selexprep_qc}
 \alias{selexprep_manifest}
 \alias{selexprep_inspection}
 \alias{selexprep_fetch_result}
 \alias{selexprep_read_inputs}
-\alias{selexprep_demultiplex}
 \title{selexprepR result objects}
 \description{
 The package uses lightweight S3 lists for decision records and reports, while
@@ -54,6 +52,9 @@ S3 lists are used for these small decision and provenance records because
 their named elements map losslessly to the versioned JSON contracts. The
 high-dimensional assay remains a standard \code{SummarizedExperiment} with a
 sparse \code{Matrix} assay.
+}
+\value{
+A description of the result classes and their stable list elements.
 }
 \examples{
 p5 <- 'GGTAATACGACTCACTATAGGG'

@@ -225,7 +225,7 @@
     values <- unique(fragments)
     counts <- tabulate(match(fragments, values), nbins = length(values))
     ordering <- order(-counts, seq_along(values), method = "radix")
-    lapply(head(ordering, k), function(index) list(values[[index]], as.numeric(counts[[index]])))
+    lapply(utils::head(ordering, k), function(index) list(values[[index]], as.numeric(counts[[index]])))
 }
 .position_consistency <- function(sequences, primer, is_prefix, tolerance = 3L) {
     if (is.null(primer)) {
