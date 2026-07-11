@@ -27,5 +27,5 @@ Python implementation does not define a tie-breaker; making it explicit in
 R provides reproducible ranks across platforms.
 }
 \examples{
-selexprep_count(c("ACGT", "ACGT", "GGGG"))
+selexprep_count(c('ACGT', 'ACGT', 'GGGG'))
 }

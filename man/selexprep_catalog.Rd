@@ -19,5 +19,5 @@ study title, and target, making it useful for discovery while leaving raw
 metadata values intact.
 }
 \examples{
-selexprep_catalog("FGF-9")
+selexprep_catalog('FGF-9')
 }

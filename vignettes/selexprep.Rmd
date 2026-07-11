@@ -18,7 +18,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 High-throughput SELEX experiments enrich binding sequences over successive
 rounds, but public deposits commonly expose raw reads without a uniform record
 of primer layout, trimming decisions, or the relationship between rounds.
-`selexprep` provides a reproducible preprocessing layer for this setting. It
+`selexprepR` provides a reproducible preprocessing layer for this setting. It
 uses `Biostrings` sequence containers, returns a sparse
 `SummarizedExperiment`, and stores its inference, extraction, quality-control,
 and provenance records alongside the assay.
@@ -27,7 +27,7 @@ The package complements general FASTQ infrastructure in Bioconductor. Its
 domain-specific contribution is conservative primer inference and a manifest
 that makes the preprocessing decision inspectable rather than implicit.
 The existing `SELEX` package provides a complementary analysis workflow based
-on its own sample annotation model. `selexprep` focuses on raw public-read
+on its own sample annotation model. `selexprepR` focuses on raw public-read
 acquisition, primer inference, and a `SummarizedExperiment` output that can be
 used by downstream Bioconductor tooling.
 
@@ -37,7 +37,7 @@ used by downstream Bioconductor tooling.
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
 }
-BiocManager::install("selexprep")
+BiocManager::install("selexprepR")
 ```
 
 # A complete in-memory workflow
@@ -47,7 +47,7 @@ and 3-prime constant regions. The variable regions below are distinct so the
 count matrix has a realistic multi-sequence shape.
 
 ```{r synthetic-data}
-library(selexprep)
+library(selexprepR)
 
 primer_5p <- "GGTAATACGACTCACTATAGGG"
 primer_3p <- "CCATGCATGCATGCATGCAT"
@@ -89,23 +89,42 @@ metadata$manifest$manifest_version
 
 # Reading FASTQ and public metadata
 
-For a raw FASTQ file, read its sequence records into a `BStringSet` and then
-assemble a named list by round before calling `run_selexprep()`.
+For local FASTQ files, the file bridge assembles rounds and retains file sizes,
+MD5 values, and SHA-256 hashes in the experiment metadata and manifest.
 
 ```{r fastq-input, eval=FALSE}
-reads_by_round <- list(
-    round_00 = read_selexprep_fastq("round_00.fastq.gz"),
-    round_01 = read_selexprep_fastq("round_01.fastq.gz")
-)
-experiment <- run_selexprep(reads_by_round)
+experiment <- run_selexprep_files(c(
+    round_00 = "round_00.fastq.gz",
+    round_01 = "round_01.fastq.gz"
+))
 ```
 
-The catalog is distributed with the package and can be queried without a
-network connection. ENA inspection and download are separate, so the planned
-files and checksums can be reviewed before any data transfer.
+When several rounds share one inline-barcoded R1 stream, provide the barcode
+map explicitly. Barcodes are checked for sufficient pairwise Hamming distance;
+the package does not infer them.
 
-```{r public-data, eval=FALSE}
+```{r demultiplex, eval=FALSE}
+inputs <- selexprep_demultiplex(
+    read_selexprep_fastq("multiplexed.fastq.gz"),
+    c(AAAAA = 0L, TTTTT = 1L)
+)
+experiment <- run_selexprep(inputs)
+```
+
+The catalog is distributed as a package dataset and can be queried without a
+network connection. Its metadata records the exact snapshot and immutable
+source locations.
+
+```{r public-catalog}
+data("selexprep_public_catalog", package = "selexprepR")
 selexprep_catalog("FGF-9")
+S4Vectors::metadata(selexprep_public_catalog)$snapshot_version
+```
+
+ENA inspection and download are separate, so the planned files and checksums
+can be reviewed before any data transfer.
+
+```{r ena-public-data, eval=FALSE}
 inspection <- inspect_selexprep_accession("PRJDB19098")
 fetch_selexprep_reads(inspection, "raw/PRJDB19098")
 ```

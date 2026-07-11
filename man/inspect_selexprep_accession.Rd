@@ -22,7 +22,7 @@ metadata and one row per run with its FASTQ URLs, sizes, and MD5 checksums.
 }
 \examples{
 \dontrun{
-inspection <- inspect_selexprep_accession("PRJDB19098")
+inspection <- inspect_selexprep_accession('PRJDB19098')
 inspection$runs
 }
 }

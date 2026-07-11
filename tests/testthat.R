@@ -1,4 +1,4 @@
 library(testthat)
-library(selexprep)
+library(selexprepR)
 
-test_check("selexprep")
+test_check("selexprepR")

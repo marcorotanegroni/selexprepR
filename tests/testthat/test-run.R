@@ -52,3 +52,47 @@ test_that("run_selexprep does not count half-inserts from a split pair", {
         "READ_MERGING_RECOMMENDED"
     )
 })
+
+test_that("run_selexprep exposes extraction provenance to QC", {
+    primer_5p <- "GGTAATACGACTCACTATAGGG"
+    primer_3p <- "CCATGCATGCATGCATGCAT"
+    forward <- paste0(primer_5p, "ACGT", primer_3p)
+    reverse <- reverse_complement(forward)
+    reads <- c(rep(forward, 400L), rep(reverse, 125L))
+
+    experiment <- run_selexprep(
+        list(round_00 = reads),
+        low_total_reads = 0L
+    )
+    flags <- as.character(S4Vectors::metadata(experiment)$qc$flags$name)
+
+    expect_true("strand_mix" %in% flags)
+})
+
+test_that("run_selexprep records manually reviewed primer overrides", {
+    primer_5p <- "GGTAATACGACTCACTATAGGG"
+    primer_3p <- "CCATGCATGCATGCATGCAT"
+    reads <- rep(paste0(primer_5p, "ACGT", primer_3p), 100L)
+
+    experiment <- run_selexprep(
+        list(round_00 = reads),
+        low_total_reads = 0L,
+        primer_5p = primer_5p,
+        primer_3p = primer_3p
+    )
+    metadata <- S4Vectors::metadata(experiment)
+
+    expect_identical(metadata$library_report$status, "LOW")
+    expect_identical(
+        metadata$library_report$extraction_mode,
+        "BOTH_PRIMERS_SINGLE_READ"
+    )
+    expect_identical(
+        metadata$manifest$parameters[["manual_primer_override"]],
+        "true"
+    )
+    expect_equal(
+        unname(Matrix::colSums(SummarizedExperiment::assay(experiment))),
+        100
+    )
+})

@@ -15,7 +15,7 @@ test_that("round inference follows the conservative metadata cascade", {
     expect_identical(assignments$source_field[[1L]], "sample_attributes")
     expect_identical(assignments$target_hint[[2L]], "Thrombin")
     expect_identical(assignments$round_candidates[[5L]], c(1L, 2L))
-    expect_false(selexprep:::.safe_round_assignments(assignments)[[5L]])
+    expect_false(selexprepR:::.safe_round_assignments(assignments)[[5L]])
 })
 
 test_that("round overrides are explicit and unknown metadata remains unresolved", {

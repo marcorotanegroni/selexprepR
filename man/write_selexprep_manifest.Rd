@@ -18,9 +18,9 @@ The SHA-256 digest of the emitted UTF-8 JSON, invisibly.
 Write a selexprep manifest as deterministic JSON
 }
 \examples{
-p5 <- "GGTAATACGACTCACTATAGGG"
-p3 <- "CCATGCATGCATGCATGCAT"
-report <- selexprep_detect(list(round_00 = rep(paste0(p5, "ACGTACGTACGTACGT", p3), 500)))
-path <- tempfile(fileext = ".json")
+p5 <- 'GGTAATACGACTCACTATAGGG'
+p3 <- 'CCATGCATGCATGCATGCAT'
+report <- selexprep_detect(list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500)))
+path <- tempfile(fileext = '.json')
 write_selexprep_manifest(build_selexprep_manifest(report), path)
 }

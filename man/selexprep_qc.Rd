@@ -15,7 +15,7 @@ selexprep_qc(
 )
 }
 \arguments{
-\item{experiment}{A \code{SummarizedExperiment} with an assay named \code{"counts"}
+\item{experiment}{A \code{SummarizedExperiment} with an assay named \code{'counts'}
 and a \code{sequence} column in \code{rowData}.}
 
 \item{library_report}{Optional \code{selexprep_library_report}. When omitted, a
@@ -45,9 +45,9 @@ also returns actionable flags for low depth, unstable random-region length,
 weak primer evidence and paired-end libraries that need read merging.
 }
 \examples{
-p5 <- "GGTAATACGACTCACTATAGGG"
-p3 <- "CCATGCATGCATGCATGCAT"
-pools <- list(round_00 = rep(paste0(p5, "ACGTACGTACGTACGT", p3), 500))
+p5 <- 'GGTAATACGACTCACTATAGGG'
+p3 <- 'CCATGCATGCATGCATGCAT'
+pools <- list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500))
 result <- run_selexprep(pools, low_total_reads = 0)
 selexprep_qc(result)
 }

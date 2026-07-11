@@ -8,7 +8,9 @@
 \alias{selexprep_manifest}
 \alias{selexprep_inspection}
 \alias{selexprep_fetch_result}
-\title{selexprep result objects}
+\alias{selexprep_read_inputs}
+\alias{selexprep_demultiplex}
+\title{selexprepR result objects}
 \description{
 The package uses lightweight S3 lists for decision records and reports, while
 sequence abundance data use the standard Bioconductor \code{SummarizedExperiment}
@@ -16,24 +18,46 @@ container. These lists are deliberately explicit and serializable: they can
 be written to the versioned JSON contracts without loss of meaning.
 }
 \details{
-\code{selexprep_library_report} contains the inferred primers, evidence metrics,
-extraction mode, orientation, and safe-failure reason when inference cannot
-support extraction. \code{selexprep_extraction} contains the primer-stripped
-sequences by round together with input/output read counts and the pre-trim
-forward/reverse/ambiguous strand distribution for every round.
+The list elements are stable public contracts:
+\itemize{
+\item \code{selexprep_library_report} stores \code{primer_5p}, \code{primer_3p}, their variant
+evidence (\code{variants_5p}, \code{variants_3p}), \code{known_adapter_hits},
+\code{extraction_mode}, \code{full_insert_recovered}, \code{read_source},
+\code{required_action}, \code{orientation}, random-region length summaries
+(\code{n_length_mode}, \code{n_length_distribution}, \code{n_length_confidence}), primer
+match and position-consistency rates, the inference fraction and seed,
+overall \code{confidence}, \code{status}, and an optional \code{failure_reason}.
+\item \code{selexprep_extraction} stores \code{extraction_mode},
+\code{full_insert_recovered}, primer-stripped \code{sequences_by_round}, named
+\code{input_reads} and \code{output_reads} counts, and the pre-trim
+forward/reverse/ambiguous \code{strand_distribution} for each round.
+\item \code{selexprep_qc} stores a \code{per_round} metrics \code{DataFrame}, a pairwise
+\code{round_similarity} \code{DataFrame}, a \code{flags} \code{DataFrame} whose \code{evidence}
+column contains structured lists, and the applied \code{settings}.
+\item \code{selexprep_manifest} stores the schema and package/runtime versions,
+accession and run identifiers, input/output SHA-256 maps, the embedded
+library report and its classification, parameters, stage durations, QC
+flags, and sampling seed. Readers accept portable Python v1 and R-native
+v2 schemas.
+\item \code{selexprep_inspection} stores the requested \code{accession}, BioProject ID,
+study title, library strategy/source, and a run-level \code{runs} \code{DataFrame}
+containing accessions, titles, sizes, FASTQ URLs, and checksums.
+\item \code{selexprep_fetch_result} stores the resolved run-level download \code{plan},
+\code{downloaded_files}, and the \code{dry_run} status.
+\item \code{selexprep_read_inputs} stores round-aware R1 pools, optional R2 pools,
+the inferred \code{read_source}, and a file-level provenance \code{DataFrame}.
+\item \code{selexprep_demultiplex} extends \code{selexprep_read_inputs} with unassigned
+reads, per-round assignment summaries, and the validated barcode map.
+}
 
-\code{selexprep_qc} has \code{per_round} and \code{flags} \code{S4Vectors::DataFrame} elements.
-\code{selexprep_manifest} stores package/runtime provenance, hashes, the embedded
-library report, parameters, durations, and QC flags. The reader accepts the
-portable Python v1 and R-native v2 manifest schemas.
-
-\code{selexprep_inspection} represents ENA metadata and has a run-level \code{runs}
-\code{DataFrame}; \code{selexprep_fetch_result} contains the corresponding download
-plan, downloaded paths, and dry-run status.
+S3 lists are used for these small decision and provenance records because
+their named elements map losslessly to the versioned JSON contracts. The
+high-dimensional assay remains a standard \code{SummarizedExperiment} with a
+sparse \code{Matrix} assay.
 }
 \examples{
-p5 <- "GGTAATACGACTCACTATAGGG"
-p3 <- "CCATGCATGCATGCATGCAT"
-report <- selexprep_detect(list(round_00 = rep(paste0(p5, "ACGTACGTACGTACGT", p3), 500)))
+p5 <- 'GGTAATACGACTCACTATAGGG'
+p3 <- 'CCATGCATGCATGCATGCAT'
+report <- selexprep_detect(list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500)))
 class(report)
 }

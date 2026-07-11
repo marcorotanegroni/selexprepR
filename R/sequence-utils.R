@@ -12,7 +12,7 @@
 #' @export
 #'
 #' @examples
-#' reverse_complement(c("ACGT", "ACGU", "ANNT"))
+#' reverse_complement(c('ACGT', 'ACGU', 'ANNT'))
 reverse_complement <- function(sequence) {
     if (!is.character(sequence)) {
         stop("`sequence` must be a character vector.", call. = FALSE)
@@ -20,11 +20,7 @@ reverse_complement <- function(sequence) {
     if (anyNA(sequence)) {
         stop("`sequence` must not contain missing values.", call. = FALSE)
     }
-
     complements <- chartr("ACGTUNacgtun", "TGCAANtgcaan", sequence)
-    vapply(
-        strsplit(complements, "", fixed = TRUE),
-        function(bases) paste0(rev(bases), collapse = ""),
-        character(1)
-    )
+    vapply(strsplit(complements, "", fixed = TRUE), function(bases) paste0(rev(bases),
+        collapse = ""), character(1))
 }

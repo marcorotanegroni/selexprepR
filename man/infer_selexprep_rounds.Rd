@@ -28,8 +28,8 @@ using enrichment signals to repair metadata.
 }
 \examples{
 runs <- data.frame(
-    run_accession = c("SRR1", "SRR2"),
-    sample_title = c("Thrombin Round 1", "Thrombin Round 2")
+    run_accession = c('SRR1', 'SRR2'),
+    sample_title = c('Thrombin Round 1', 'Thrombin Round 2')
 )
 infer_selexprep_rounds(runs)
 }

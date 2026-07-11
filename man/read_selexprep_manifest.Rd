@@ -17,10 +17,10 @@ Reads and validates both the portable Python \code{selexprep_manifest_v1} format
 and the R-native \code{selexprep_manifest_v2} format.
 }
 \examples{
-p5 <- "GGTAATACGACTCACTATAGGG"
-p3 <- "CCATGCATGCATGCATGCAT"
-report <- selexprep_detect(list(round_00 = rep(paste0(p5, "ACGTACGTACGTACGT", p3), 500)))
-path <- tempfile(fileext = ".json")
+p5 <- 'GGTAATACGACTCACTATAGGG'
+p3 <- 'CCATGCATGCATGCATGCAT'
+report <- selexprep_detect(list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500)))
+path <- tempfile(fileext = '.json')
 write_selexprep_manifest(build_selexprep_manifest(report), path)
 read_selexprep_manifest(path)
 }

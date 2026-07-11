@@ -1,10 +1,10 @@
-citHeader("To cite selexprep in publications use:")
+citHeader("To cite selexprepR in publications use:")
 
 bibentry(
     bibtype = "Manual",
-    title = "selexprep: Preprocessing Public HT-SELEX Sequencing Data",
+    title = "selexprepR: Preprocessing Public HT-SELEX Sequencing Data",
     author = person("Marco", "Rotanegroni"),
     year = "2026",
-    note = "R package version 0.99.0",
+    note = "R package version 0.99.1",
     url = "https://github.com/marcorotanegroni/selexprepR"
 )

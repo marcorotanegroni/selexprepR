@@ -24,7 +24,7 @@ fetch_selexprep_reads(
 
 \item{overwrite}{Whether an existing destination file may be replaced.}
 
-\item{timeout_seconds}{Positive timeout forwarded when an accession is given.}
+\item{timeout_seconds}{Positive timeout for metadata and FASTQ requests.}
 
 \item{require_assigned_rounds}{Whether to refuse ambiguous or missing round
 assignments before creating a download plan.}
@@ -44,7 +44,7 @@ against ENA's MD5 value when one is supplied.
 }
 \examples{
 \dontrun{
-inspection <- inspect_selexprep_accession("PRJDB19098")
-fetch_selexprep_reads(inspection, "raw/PRJDB19098")
+inspection <- inspect_selexprep_accession('PRJDB19098')
+fetch_selexprep_reads(inspection, 'raw/PRJDB19098')
 }
 }

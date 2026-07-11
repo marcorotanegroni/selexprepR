@@ -11,12 +11,15 @@ run_selexprep(
   accession = NULL,
   sampling_seed = 42L,
   max_reads_per_round = NULL,
-  low_total_reads = 10000L
+  low_total_reads = 10000L,
+  primer_5p = NULL,
+  primer_3p = NULL,
+  extraction_mode = NULL
 )
 }
 \arguments{
 \item{sequences_by_round}{A named list of R1 pools, as accepted by
-\code{selexprep_detect()}.}
+\code{selexprep_detect()}, or a \code{selexprep_read_inputs} object.}
 
 \item{read_source}{Input read layout.}
 
@@ -29,6 +32,12 @@ run_selexprep(
 \item{max_reads_per_round}{Optional detection subsampling cap.}
 
 \item{low_total_reads}{QC threshold for per-round read depth.}
+
+\item{primer_5p}{Optional manually reviewed 5-prime primer override.}
+
+\item{primer_3p}{Optional manually reviewed 3-prime primer override.}
+
+\item{extraction_mode}{Optional manually reviewed extraction-mode override.}
 }
 \value{
 A \code{SummarizedExperiment} with the LibraryReport, extraction and QC
@@ -47,8 +56,8 @@ full inserts cannot be counted without read merging. Their separate trimmed
 sides remain available in \code{metadata(result)$extraction}.
 }
 \examples{
-p5 <- "GGTAATACGACTCACTATAGGG"
-p3 <- "CCATGCATGCATGCATGCAT"
-pools <- list(round_00 = rep(paste0(p5, "ACGTACGTACGTACGT", p3), 500))
+p5 <- 'GGTAATACGACTCACTATAGGG'
+p3 <- 'CCATGCATGCATGCATGCAT'
+pools <- list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500))
 run_selexprep(pools, low_total_reads = 0)
 }

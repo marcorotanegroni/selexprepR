@@ -1,9 +1,9 @@
-Package: selexprep
+Package: selexprepR
 Title: Preprocessing Public HT-SELEX Sequencing Data
-Version: 0.99.0
+Version: 0.99.1
 Authors@R:
     person(given = "Marco", family = "Rotanegroni",
-           email = "marco.rotanegroni@studenti.unipd.it",
+           email = "marco.rotanegroni@phd.unipd.it",
            role = c("aut", "cre"))
 Description: Provides reproducible preprocessing for high-throughput
     SELEX sequencing data. Supports primer inference, extraction of random
@@ -22,7 +22,8 @@ Imports:
     jsonlite,
     Matrix,
     S4Vectors,
-    SummarizedExperiment
+    SummarizedExperiment,
+    withr
 Suggests:
     arrow,
     BiocStyle,

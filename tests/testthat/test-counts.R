@@ -26,7 +26,7 @@ test_that("selexprep_count validates its input", {
 test_that("multi-round counts use a sparse SummarizedExperiment", {
     round_0 <- selexprep_count(c("AAAA", "AAAA", "CCCC"))
     round_1 <- selexprep_count(c("AAAA", "GGGG", "GGGG"))
-    experiment <- selexprep:::.as_selexprep_experiment(
+    experiment <- selexprepR:::.as_selexprep_experiment(
         list(round_00 = round_0, round_01 = round_1),
         accession = "PRJNA000001"
     )

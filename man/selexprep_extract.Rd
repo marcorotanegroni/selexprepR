@@ -7,7 +7,10 @@
 selexprep_extract(
   sequences_by_round,
   library_report,
-  paired_mate_streams = NULL
+  paired_mate_streams = NULL,
+  primer_5p = NULL,
+  primer_3p = NULL,
+  extraction_mode = NULL
 )
 }
 \arguments{
@@ -19,6 +22,12 @@ or \code{read_library_report()}.}
 
 \item{paired_mate_streams}{Optional named R2 sequence pools, required for
 \code{PAIRED_END_SPLIT_PRIMERS} reports.}
+
+\item{primer_5p}{Optional manually reviewed 5-prime primer override.}
+
+\item{primer_3p}{Optional manually reviewed 3-prime primer override.}
+
+\item{extraction_mode}{Optional manually reviewed extraction-mode override.}
 }
 \value{
 A \code{selexprep_extraction}. Full and single-primer modes store one
@@ -33,12 +42,19 @@ unable to extract stop with an error unless the caller supplies a corrected
 report. In split-primer paired-end mode, the two trimmed sides remain
 separate; they are never silently merged.
 }
+\details{
+Full-primer matching follows the cutadapt defaults used by the Python
+pipeline: adapters may occur away from the read boundary, substitutions
+and indels are allowed up to a 10 percent error rate, and RNA \code{U} is
+matched as DNA \code{T}. The returned insert retains the alphabet and case of
+the input read.
+}
 \examples{
-primer_5p <- "GGTAATACGACTCACTATAGGG"
-primer_3p <- "CCATGCATGCATGCATGCAT"
-bases <- c("A", "C", "G", "T")
+primer_5p <- 'GGTAATACGACTCACTATAGGG'
+primer_3p <- 'CCATGCATGCATGCATGCAT'
+bases <- c('A', 'C', 'G', 'T')
 random_regions <- vapply(0:499, function(i) {
-    paste0(bases[(i * 7 + 0:15 * 13) \%\% 4 + 1], collapse = "")
+    paste0(bases[(i * 7 + 0:15 * 13) \%\% 4 + 1], collapse = '')
 }, character(1))
 reads <- paste0(primer_5p, random_regions, primer_3p)
 report <- selexprep_detect(list(round_00 = reads))
