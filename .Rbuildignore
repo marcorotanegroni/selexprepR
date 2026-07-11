@@ -4,6 +4,7 @@
 ^\.Ruserdata$
 ^\.Rlib$
 ^\.Rproj\.user$
+^\.github$
 ^.*\.Rproj$
 ^selexprep_[0-9.-]+\.tar\.gz$
 ^selexprepR_[0-9.-]+\.tar\.gz$

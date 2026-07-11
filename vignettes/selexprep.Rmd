@@ -4,9 +4,9 @@ author: "Marco Rotanegroni"
 date: "`r Sys.Date()`"
 output: BiocStyle::html_document
 vignette: >
-  %\\VignetteIndexEntry{Preprocessing an HT-SELEX study}
-  %\\VignetteEngine{knitr::rmarkdown}
-  %\\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Preprocessing an HT-SELEX study}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}

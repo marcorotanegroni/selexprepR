@@ -4,12 +4,10 @@
 \alias{selexprep-classes}
 \alias{selexprep_library_report}
 \alias{selexprep_extraction}
-\alias{selexprep_qc}
 \alias{selexprep_manifest}
 \alias{selexprep_inspection}
 \alias{selexprep_fetch_result}
 \alias{selexprep_read_inputs}
-\alias{selexprep_demultiplex}
 \title{selexprepR result objects}
 \description{
 The package uses lightweight S3 lists for decision records and reports, while
