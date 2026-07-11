@@ -35,15 +35,35 @@ jobs:
             version = "devel",
             ask = FALSE
           )
-          BiocManager::install(
-            c(
-              "arrow", "BiocCheck", "BiocStyle", "Biostrings", "digest",
-              "httr2", "jsonlite", "knitr", "Matrix", "rmarkdown",
-              "S4Vectors", "SummarizedExperiment", "testthat", "withr"
-            ),
-            ask = FALSE,
-            update = TRUE
+          required <- c(
+            "arrow", "BiocCheck", "BiocStyle", "Biostrings", "digest",
+            "httr2", "jsonlite", "knitr", "Matrix", "rmarkdown",
+            "S4Vectors", "SummarizedExperiment", "testthat", "withr"
           )
+          missing <- required
+          for (attempt in seq_len(3L)) {
+            BiocManager::install(
+              missing,
+              ask = FALSE,
+              update = TRUE,
+              force = attempt > 1L
+            )
+            available <- vapply(
+              required,
+              requireNamespace,
+              logical(1L),
+              quietly = TRUE
+            )
+            missing <- required[!available]
+            if (!length(missing)) {
+              break
+            }
+            message("Dependency attempt ", attempt, " left missing: ",
+                    toString(missing))
+          }
+          if (length(missing)) {
+            stop("Required packages remain unavailable: ", toString(missing))
+          }
           stopifnot(BiocManager::valid())
 
       - name: BiocCheck Git clone
@@ -80,4 +100,4 @@ jobs:
             selexprepR_*.tar.gz
             *.Rcheck/**
             *.BiocCheck/**
-          if-no-files-found: warn
+          if-no-files-found: ignore
