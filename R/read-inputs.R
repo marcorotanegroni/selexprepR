@@ -30,7 +30,7 @@
     }
     if (anyNA(mate)) {
         if (any(mate == "R2", na.rm = TRUE)) {
-            stop(paste("Could not infer every mate in a paired-end input;", "supply `mate` explicitly."),
+            stop("Could not infer every mate in a paired-end input; supply `mate` explicitly.",
                 call. = FALSE)
         }
         mate[is.na(mate)] <- "R1"
@@ -70,7 +70,7 @@
         stop("The fetch result contains an invalid download plan.", call. = FALSE)
     }
     if (!is.character(paths) || length(paths) != nrow(plan)) {
-        stop(paste("The fetch result does not map every plan row to a", "downloaded file."),
+        stop("The fetch result does not map every plan row to a downloaded file.",
             call. = FALSE)
     }
     if ("round_unambiguous" %in% colnames(plan)) {
@@ -94,15 +94,15 @@
             round <- .rounds_from_path_names(paths)
         }
         if (is.null(round)) {
-            stop(paste("Supply `round`, or name each path with a label ending",
-                "in its round number."), call. = FALSE)
+            stop("Supply `round`, or name each path with a label ending in its round number.",
+                call. = FALSE)
         }
         return(data.frame(path = unname(paths), round_number = round, mate = if (is.null(mate)) NA_character_ else mate,
             run_accession = NA_character_, stringsAsFactors = FALSE))
     }
     valid_table <- inherits(x, "DataFrame") || is.data.frame(x)
     if (!valid_table) {
-        stop(paste("`x` must be FASTQ paths, a file table, or a completed", "selexprep_fetch_result."),
+        stop("`x` must be FASTQ paths, a file table, or a completed selexprep_fetch_result.",
             call. = FALSE)
     }
     required <- c("path", "round_number")
@@ -219,8 +219,8 @@ read_selexprep_inputs <- function(x, round = NULL, mate = NULL, max_reads_per_fi
         r2_reads <- vapply(paired_mate_streams, length, integer(1))
         unequal <- r1_reads != r2_reads
         if (any(unequal)) {
-            stop(sprintf("Paired streams have different read counts in %s.", paste(names(r1_reads)[unequal],
-                collapse = ", ")), call. = FALSE)
+            stop(sprintf("Paired streams have different read counts in %s.",
+                toString(names(r1_reads)[unequal])), call. = FALSE)
         }
     }
     file_order <- order(table$round_number, match(table$mate, c("R1", "R2")), seq_len(n_files),
@@ -245,7 +245,7 @@ read_selexprep_inputs <- function(x, round = NULL, mate = NULL, max_reads_per_fi
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' experiment <- run_selexprep_files(
 #'     c(round_00 = 'round_00.fastq.gz',
 #'       round_01 = 'round_01.fastq.gz')

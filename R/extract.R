@@ -229,7 +229,7 @@
 #' }, character(1))
 #' reads <- paste0(primer_5p, random_regions, primer_3p)
 #' report <- selexprep_detect(list(round_00 = reads))
-#' selexprep_extract(list(round_00 = reads[1:3]), report)
+#' selexprep_extract(list(round_00 = reads[seq_len(3L)]), report)
 selexprep_extract <- function(sequences_by_round, library_report,
     paired_mate_streams = NULL, primer_5p = NULL, primer_3p = NULL,
     extraction_mode = NULL) {
@@ -244,7 +244,7 @@ selexprep_extract <- function(sequences_by_round, library_report,
     )
     if (identical(library_report$status, "UNABLE_TO_INFER") || identical(library_report$extraction_mode,
         "UNABLE_TO_EXTRACT")) {
-        stop(paste("LibraryReport does not permit extraction;", "provide explicit corrected primers."),
+        stop("LibraryReport does not permit extraction; provide explicit corrected primers.",
             call. = FALSE)
     }
     pools <- .as_round_pools(sequences_by_round, "sequences_by_round")
@@ -259,13 +259,13 @@ selexprep_extract <- function(sequences_by_round, library_report,
     }
     if (identical(mode, "PAIRED_END_SPLIT_PRIMERS")) {
         if (is.null(paired_mate_streams)) {
-            stop(paste("PAIRED_END_SPLIT_PRIMERS extraction requires", "`paired_mate_streams`."),
+            stop("PAIRED_END_SPLIT_PRIMERS extraction requires `paired_mate_streams`.",
                 call. = FALSE)
         }
         mate_pools <- .as_round_pools(paired_mate_streams, "paired_mate_streams")
         if (!identical(names(pools), names(mate_pools))) {
-            stop(paste("`paired_mate_streams` must have the same round names as",
-                "`sequences_by_round`."), call. = FALSE)
+            stop("`paired_mate_streams` must have the same round names as `sequences_by_round`.",
+                call. = FALSE)
         }
         if (is.null(library_report$primer_5p) || is.null(library_report$primer_3p)) {
             stop("Split-primer extraction requires both primer sequences.", call. = FALSE)

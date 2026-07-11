@@ -39,7 +39,7 @@ Convenience bridge combining \code{\link[=read_selexprep_inputs]{read_selexprep_
 \code{metadata(result)$input_files}.
 }
 \examples{
-\dontrun{
+\donttest{
 experiment <- run_selexprep_files(
     c(round_00 = 'round_00.fastq.gz',
       round_01 = 'round_01.fastq.gz')

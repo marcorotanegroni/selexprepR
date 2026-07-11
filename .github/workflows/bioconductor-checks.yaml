@@ -46,6 +46,14 @@ jobs:
           )
           stopifnot(BiocManager::valid())
 
+      - name: BiocCheck Git clone
+        shell: Rscript {0}
+        run: |
+          BiocCheck::BiocCheckGitClone(
+            ".",
+            `quit-with-status` = TRUE
+          )
+
       - name: Build source package
         run: R CMD build .
 
@@ -60,14 +68,6 @@ jobs:
           BiocCheck::BiocCheck(
             tarball,
             `new-package` = TRUE,
-            `quit-with-status` = TRUE
-          )
-
-      - name: BiocCheck Git clone
-        shell: Rscript {0}
-        run: |
-          BiocCheck::BiocCheckGitClone(
-            ".",
             `quit-with-status` = TRUE
           )
 

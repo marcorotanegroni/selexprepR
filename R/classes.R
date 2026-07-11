@@ -41,6 +41,8 @@
 #' high-dimensional assay remains a standard `SummarizedExperiment` with a
 #' sparse `Matrix` assay.
 #'
+#' @return A description of the result classes and their stable list elements.
+#'
 #' @name selexprep-classes
 #' @aliases selexprep_library_report
 #' @aliases selexprep_extraction

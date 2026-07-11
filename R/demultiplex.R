@@ -38,10 +38,7 @@
                 if (distance < minimum_distance) {
                     stop(
                         sprintf(
-                            paste(
-                                "Barcodes %s and %s have distance %d;",
-                                "at least %d is required."
-                            ),
+                            "Barcodes %s and %s have distance %d; at least %d is required.",
                             names(barcodes)[[left]],
                             names(barcodes)[[right]],
                             distance,

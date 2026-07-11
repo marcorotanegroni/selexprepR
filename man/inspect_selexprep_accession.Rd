@@ -21,7 +21,7 @@ The returned \code{selexprep_inspection} retains verbatim library strategy/sourc
 metadata and one row per run with its FASTQ URLs, sizes, and MD5 checksums.
 }
 \examples{
-\dontrun{
+\donttest{
 inspection <- inspect_selexprep_accession('PRJDB19098')
 inspection$runs
 }

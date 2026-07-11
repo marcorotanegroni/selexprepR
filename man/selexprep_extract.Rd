@@ -58,5 +58,5 @@ random_regions <- vapply(0:499, function(i) {
 }, character(1))
 reads <- paste0(primer_5p, random_regions, primer_3p)
 report <- selexprep_detect(list(round_00 = reads))
-selexprep_extract(list(round_00 = reads[1:3]), report)
+selexprep_extract(list(round_00 = reads[seq_len(3L)]), report)
 }

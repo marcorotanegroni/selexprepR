@@ -40,9 +40,11 @@
         all(is.finite(provenance$output))
     if (complete) {
         values <- rbind(input = provenance$input, extracted = provenance$output)
-        graphics::barplot(values, beside = TRUE, names.arg = rounds, col = .qc_plot_colours[1:2],
+        graphics::barplot(values, beside = TRUE, names.arg = rounds,
+            col = .qc_plot_colours[seq_len(2L)],
             border = NA, las = 2, cex.names = 0.75, ylab = "Reads", main = "Read retention")
-        graphics::legend("topright", legend = rownames(values), fill = .qc_plot_colours[1:2],
+        graphics::legend("topright", legend = rownames(values),
+            fill = .qc_plot_colours[seq_len(2L)],
             border = NA, bty = "n", cex = 0.75)
         return(invisible(NULL))
     }
@@ -74,7 +76,7 @@
     if (inherits(report, "selexprep_library_report")) {
         references <- c(`5' report match` = report$match_rate_5p, `3' report match` = report$match_rate_3p)
         keep <- is.finite(references)
-        reference_colours <- .qc_plot_colours[2:3][keep]
+        reference_colours <- .qc_plot_colours[seq.int(2L, 3L)][keep]
         references <- references[keep]
         if (length(references)) {
             for (index in seq_along(references)) {
@@ -131,11 +133,14 @@
         x_limits <- x_limits + c(-0.5, 0.5)
     }
     colours <- rep(.qc_plot_colours, length.out = length(rounds))
-    graphics::matplot(lengths, fractions, type = "o", lty = rep(1:6, length.out = length(rounds)),
-        pch = rep(15:20, length.out = length(rounds)), col = colours, xlim = x_limits,
+    graphics::matplot(lengths, fractions, type = "o",
+        lty = rep(seq_len(6L), length.out = length(rounds)),
+        pch = rep(seq.int(15L, 20L), length.out = length(rounds)),
+        col = colours, xlim = x_limits,
         xlab = "Random-region length", ylab = "Fraction of reads", main = "Length distribution")
-    graphics::legend("topright", legend = rounds, col = colours, lty = rep(1:6,
-        length.out = length(rounds)), pch = rep(15:20, length.out = length(rounds)),
+    graphics::legend("topright", legend = rounds, col = colours,
+        lty = rep(seq_len(6L), length.out = length(rounds)),
+        pch = rep(seq.int(15L, 20L), length.out = length(rounds)),
         bty = "n", cex = 0.65, ncol = max(1, ceiling(length(rounds)/8)))
     invisible(NULL)
 }

@@ -31,8 +31,8 @@
     }
     missing <- setdiff(.ena_filereport_fields, colnames(raw))
     if (length(missing)) {
-        stop(sprintf("ENA response is missing required fields: %s.", paste(missing,
-            collapse = ", ")), call. = FALSE)
+        stop(sprintf("ENA response is missing required fields: %s.", toString(missing)),
+            call. = FALSE)
     }
     runs <- S4Vectors::DataFrame(run_accession = vapply(raw$run_accession, .as_ena_scalar,
         character(1)), sample_accession = vapply(raw$sample_accession, .as_ena_scalar,
@@ -94,7 +94,7 @@
 #'   `S4Vectors::DataFrame` in `$runs`.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' inspection <- inspect_selexprep_accession('PRJDB19098')
 #' inspection$runs
 #' }
@@ -142,7 +142,7 @@ inspect_selexprep_accession <- function(accession, timeout_seconds = 30) {
 #'   `$downloaded_files`, and `$dry_run`.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' inspection <- inspect_selexprep_accession('PRJDB19098')
 #' fetch_selexprep_reads(inspection, 'raw/PRJDB19098')
 #' }

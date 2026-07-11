@@ -53,6 +53,9 @@ their named elements map losslessly to the versioned JSON contracts. The
 high-dimensional assay remains a standard \code{SummarizedExperiment} with a
 sparse \code{Matrix} assay.
 }
+\value{
+A description of the result classes and their stable list elements.
+}
 \examples{
 p5 <- 'GGTAATACGACTCACTATAGGG'
 p3 <- 'CCATGCATGCATGCATGCAT'
