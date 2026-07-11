@@ -20,5 +20,5 @@ A/a, and preserves ambiguous bases such as N/n. It is vectorized over
 \code{sequence}.
 }
 \examples{
-reverse_complement(c("ACGT", "ACGU", "ANNT"))
+reverse_complement(c('ACGT', 'ACGU', 'ANNT'))
 }

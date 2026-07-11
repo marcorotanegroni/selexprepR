@@ -17,10 +17,10 @@ A validated \code{selexprep_library_report}.
 Read a LibraryReport JSON file
 }
 \examples{
-p5 <- "GGTAATACGACTCACTATAGGG"
-p3 <- "CCATGCATGCATGCATGCAT"
-report <- selexprep_detect(list(round_00 = rep(paste0(p5, "ACGTACGTACGTACGT", p3), 500)))
-path <- tempfile(fileext = ".json")
+p5 <- 'GGTAATACGACTCACTATAGGG'
+p3 <- 'CCATGCATGCATGCATGCAT'
+report <- selexprep_detect(list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500)))
+path <- tempfile(fileext = '.json')
 write_library_report(report, path)
 read_library_report(path)
 }

@@ -48,6 +48,19 @@ test_that("fetch refuses ambiguous round metadata unless acquisition-only is exp
     expect_false(all(acquisition_only$plan$round_unambiguous))
 })
 
+test_that("fetch validates the download timeout before planning", {
+    inspection <- .parse_ena_filereport(.ena_fixture, "PRJNA000001")
+
+    expect_error(
+        fetch_selexprep_reads(
+            inspection,
+            tempfile("selexprep-fetch-"),
+            timeout_seconds = 0
+        ),
+        "positive number"
+    )
+})
+
 test_that("ENA parser rejects missing fields and empty reports", {
     expect_error(.parse_ena_filereport("run_accession\nSRR000001", "PRJNA000001"), "missing required")
     expect_error(.parse_ena_filereport(paste(.ena_filereport_fields, collapse = "\t"), "PRJNA000001"),

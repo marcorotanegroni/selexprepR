@@ -10,23 +10,36 @@
 #' @return An `S4Vectors::DataFrame` of curated study metadata.
 #' @export
 #' @examples
-#' selexprep_catalog("FGF-9")
+#' selexprep_catalog('FGF-9')
 selexprep_catalog <- function(query = NULL) {
-    if (!is.null(query) &&
-        (!is.character(query) || length(query) != 1L || is.na(query) || !nzchar(query))) {
+    valid_query <- is.character(query) && length(query) == 1L && !is.na(query) &&
+        nzchar(query)
+    if (!is.null(query) && !valid_query) {
         stop("`query` must be NULL or one non-empty string.", call. = FALSE)
     }
-    path <- system.file("extdata", "selexprep_catalog.csv", package = "selexprep")
-    if (!nzchar(path)) {
-        stop("The bundled selexprep catalog is unavailable.", call. = FALSE)
-    }
-    catalog <- utils::read.csv(path, check.names = FALSE, stringsAsFactors = FALSE,
-        na.strings = ""
-    )
+    catalog <- .load_selexprep_public_catalog()
     if (!is.null(query)) {
-        searchable <- catalog[, c("bioproject_id", "study_title", "target"), drop = FALSE]
-        text <- apply(searchable, 1L, paste, collapse = " ")
-        catalog <- catalog[grepl(tolower(query), tolower(text), fixed = TRUE), , drop = FALSE]
+        searchable <- lapply(catalog[, c("bioproject_id", "study_title", "target")],
+            function(value) {
+                value <- as.character(value)
+                value[is.na(value)] <- ""
+                value
+            })
+        text <- do.call(paste, searchable)
+        keep <- grepl(tolower(query), tolower(text), fixed = TRUE)
+        catalog <- catalog[keep, , drop = FALSE]
     }
-    S4Vectors::DataFrame(catalog, check.names = FALSE)
+    catalog
+}
+.catalog_cache <- new.env(parent = emptyenv())
+.load_selexprep_public_catalog <- function() {
+    object_name <- "selexprep_public_catalog"
+    if (!exists(object_name, envir = .catalog_cache, inherits = FALSE)) {
+        package <- utils::packageName(environment())
+        utils::data(list = object_name, package = package, envir = .catalog_cache)
+    }
+    if (!exists(object_name, envir = .catalog_cache, inherits = FALSE)) {
+        stop("The bundled selexprepR catalog is unavailable.", call. = FALSE)
+    }
+    get(object_name, envir = .catalog_cache, inherits = FALSE)
 }

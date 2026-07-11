@@ -20,7 +20,7 @@ Reads a plain or gzip-compressed FASTQ file into a \code{Biostrings::BStringSet}
 loss of uracil that would occur when every input is coerced to DNA.
 }
 \examples{
-path <- tempfile(fileext = ".fastq")
-writeLines(c("@read_1", "ACGU", "+", "IIII"), path)
+path <- tempfile(fileext = '.fastq')
+writeLines(c('@read_1', 'ACGU', '+', 'IIII'), path)
 read_selexprep_fastq(path)
 }

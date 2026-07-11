@@ -1,27 +1,17 @@
-.manifest_v1_fields <- c(
-    "manifest_version", "selexprep_version", "python_version", "cutadapt_version",
-    "dnaio_version", "pyarrow_version", "accession", "bioproject_id", "runs",
-    "input_sha256", "output_sha256", "library_report", "extraction_mode",
-    "read_source", "required_action", "full_insert_recovered", "parameters",
-    "runtime_seconds_per_stage", "flags", "sampling_seed"
-)
-
-.manifest_v2_fields <- c(
-    "manifest_version", "selexprep_version", "r_version", "bioconductor_version",
-    "accession", "bioproject_id", "runs", "input_sha256", "output_sha256",
-    "library_report", "extraction_mode", "read_source", "required_action",
+.manifest_v1_fields <- c("manifest_version", "selexprep_version", "python_version",
+    "cutadapt_version", "dnaio_version", "pyarrow_version", "accession", "bioproject_id",
+    "runs", "input_sha256", "output_sha256", "library_report", "extraction_mode",
+    "read_source", "required_action", "full_insert_recovered", "parameters", "runtime_seconds_per_stage",
+    "flags", "sampling_seed")
+.manifest_v2_fields <- c("manifest_version", "selexprep_version", "r_version",
+    "bioconductor_version", "accession", "bioproject_id", "runs", "input_sha256",
+    "output_sha256", "library_report", "extraction_mode", "read_source", "required_action",
     "full_insert_recovered", "parameters", "runtime_seconds_per_stage", "flags",
-    "sampling_seed"
-)
-
+    "sampling_seed")
 .manifest_fields_for_version <- function(version) {
-    switch(version,
-        selexprep_manifest_v1 = .manifest_v1_fields,
-        selexprep_manifest_v2 = .manifest_v2_fields,
-        stop("Unsupported selexprep manifest version.", call. = FALSE)
-    )
+    switch(version, selexprep_manifest_v1 = .manifest_v1_fields, selexprep_manifest_v2 = .manifest_v2_fields,
+        stop("Unsupported selexprep manifest version.", call. = FALSE))
 }
-
 .as_optional_string <- function(value, name) {
     if (is.null(value)) {
         return(NULL)
@@ -31,7 +21,6 @@
     }
     unname(value)
 }
-
 .as_string <- function(value, name) {
     value <- .as_optional_string(value, name)
     if (is.null(value)) {
@@ -39,7 +28,6 @@
     }
     value
 }
-
 .as_named_map <- function(value, name, mode = c("character", "numeric")) {
     mode <- match.arg(mode)
     if (is.null(value)) {
@@ -65,7 +53,6 @@
     }
     stats::setNames(as.numeric(value), names(value))
 }
-
 .as_character_vector <- function(value, name) {
     if (is.list(value)) {
         value <- unlist(value, use.names = FALSE)
@@ -74,51 +61,42 @@
         return(character())
     }
     if (!is.character(value) || anyNA(value)) {
-        stop(sprintf("`%s` must be a character vector without missing values.", name), call. = FALSE)
+        stop(sprintf("`%s` must be a character vector without missing values.",
+            name), call. = FALSE)
     }
     unname(value)
 }
-
 .as_sorted_json_map <- function(value) {
     if (!length(value)) {
         return(list())
     }
     as.list(value[order(names(value), method = "radix")])
 }
-
 .library_report_from_payload <- function(payload) {
     if (!is.list(payload) || !identical(names(payload), .library_report_fields)) {
-        stop("`library_report` does not match the stable LibraryReport schema.", call. = FALSE)
+        stop("`library_report` does not match the stable LibraryReport schema.",
+            call. = FALSE)
     }
-    payload$known_adapter_hits <- .as_named_map(
-        payload$known_adapter_hits,
-        "library_report$known_adapter_hits",
-        mode = "numeric"
-    )
-    payload$n_length_distribution <- .as_named_map(
-        payload$n_length_distribution,
-        "library_report$n_length_distribution",
-        mode = "numeric"
-    )
+    payload$known_adapter_hits <- .as_named_map(payload$known_adapter_hits, "library_report$known_adapter_hits",
+        mode = "numeric")
+    payload$n_length_distribution <- .as_named_map(payload$n_length_distribution,
+        "library_report$n_length_distribution", mode = "numeric")
     .new_library_report(payload)
 }
-
 .selexprep_version <- function() {
-    version <- tryCatch(
-        utils::packageDescription("selexprep", fields = "Version"),
-        error = function(...) NULL
-    )
+    package <- utils::packageName(environment())
+    version <- tryCatch(utils::packageDescription(package, fields = "Version"),
+        error = function(...) NULL)
     if (is.null(version) || !length(version) || is.na(version)) {
-        return("0.99.0")
+        return("0.99.1")
     }
     as.character(version)
 }
-
 .bioconductor_version <- function() {
     version <- tryCatch(utils::packageVersion("BiocVersion"), error = function(...) NULL)
-    if (is.null(version)) NULL else as.character(version)
+    if (is.null(version))
+        NULL else as.character(version)
 }
-
 .new_selexprep_manifest <- function(fields) {
     if (!is.list(fields) || is.null(fields$manifest_version)) {
         stop("A manifest must be a named list with `manifest_version`.", call. = FALSE)
@@ -126,7 +104,8 @@
     version <- .as_string(fields$manifest_version, "manifest_version")
     expected_fields <- .manifest_fields_for_version(version)
     if (!identical(names(fields), expected_fields)) {
-        stop("The manifest does not contain the stable field set for its version.", call. = FALSE)
+        stop("The manifest does not contain the stable field set for its version.",
+            call. = FALSE)
     }
     fields$manifest_version <- version
     fields$selexprep_version <- .as_string(fields$selexprep_version, "selexprep_version")
@@ -136,10 +115,8 @@
         }
     } else {
         fields$r_version <- .as_string(fields$r_version, "r_version")
-        fields["bioconductor_version"] <- list(.as_optional_string(
-            fields$bioconductor_version,
-            "bioconductor_version"
-        ))
+        fields["bioconductor_version"] <- list(.as_optional_string(fields$bioconductor_version,
+            "bioconductor_version"))
     }
     fields["accession"] <- list(.as_optional_string(fields$accession, "accession"))
     fields["bioproject_id"] <- list(.as_optional_string(fields$bioproject_id, "bioproject_id"))
@@ -151,32 +128,28 @@
         fields[[name]] <- .as_string(fields[[name]], name)
     }
     if (!identical(fields$extraction_mode, fields$library_report$extraction_mode) ||
-        !identical(fields$read_source, fields$library_report$read_source) ||
-        !identical(fields$required_action, fields$library_report$required_action)) {
-        stop("Manifest classification fields must agree with `library_report`.", call. = FALSE)
+        !identical(fields$read_source, fields$library_report$read_source) || !identical(fields$required_action,
+        fields$library_report$required_action)) {
+        stop("Manifest classification fields must agree with `library_report`.",
+            call. = FALSE)
     }
-    if (!is.logical(fields$full_insert_recovered) || length(fields$full_insert_recovered) != 1L ||
-        is.na(fields$full_insert_recovered) ||
-        !identical(fields$full_insert_recovered, fields$library_report$full_insert_recovered)) {
+    if (!is.logical(fields$full_insert_recovered) || length(fields$full_insert_recovered) !=
+        1L || is.na(fields$full_insert_recovered) || !identical(fields$full_insert_recovered,
+        fields$library_report$full_insert_recovered)) {
         stop("`full_insert_recovered` must agree with `library_report`.", call. = FALSE)
     }
     fields$parameters <- .as_named_map(fields$parameters, "parameters")
-    fields$runtime_seconds_per_stage <- .as_named_map(
-        fields$runtime_seconds_per_stage,
-        "runtime_seconds_per_stage",
-        mode = "numeric"
-    )
+    fields$runtime_seconds_per_stage <- .as_named_map(fields$runtime_seconds_per_stage,
+        "runtime_seconds_per_stage", mode = "numeric")
     fields$flags <- .as_character_vector(fields$flags, "flags")
     if (!is.numeric(fields$sampling_seed) || length(fields$sampling_seed) != 1L ||
         is.na(fields$sampling_seed) || !identical(as.numeric(fields$sampling_seed),
-            as.numeric(fields$library_report$sampling_seed))) {
+        as.numeric(fields$library_report$sampling_seed))) {
         stop("`sampling_seed` must agree with `library_report`.", call. = FALSE)
     }
     fields$sampling_seed <- as.numeric(fields$sampling_seed)
-
     structure(fields, class = c("selexprep_manifest", "list"))
 }
-
 .manifest_payload <- function(manifest) {
     if (!inherits(manifest, "selexprep_manifest")) {
         stop("`manifest` must be a selexprep_manifest.", call. = FALSE)
@@ -189,7 +162,6 @@
     payload$library_report <- .library_report_payload(payload$library_report)
     payload
 }
-
 .hash_paths <- function(paths, root = NULL) {
     paths <- as.character(paths)
     if (!length(paths)) {
@@ -212,7 +184,6 @@
     hashes <- vapply(expanded, digest::digest, character(1), algo = "sha256", file = TRUE)
     stats::setNames(unname(hashes), keys)
 }
-
 #' Build an R-native reproducibility manifest
 #'
 #' Builds a versioned `selexprep_manifest_v2` object. The reader also accepts
@@ -235,39 +206,26 @@
 #' @return A validated `selexprep_manifest`.
 #' @export
 #' @examples
-#' p5 <- "GGTAATACGACTCACTATAGGG"
-#' p3 <- "CCATGCATGCATGCATGCAT"
-#' report <- selexprep_detect(list(round_00 = rep(paste0(p5, "ACGTACGTACGTACGT", p3), 500)))
+#' p5 <- 'GGTAATACGACTCACTATAGGG'
+#' p3 <- 'CCATGCATGCATGCATGCAT'
+#' report <- selexprep_detect(list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500)))
 #' build_selexprep_manifest(report)
 build_selexprep_manifest <- function(library_report, input_paths = character(),
-    output_paths = character(), accession = NULL, bioproject_id = NULL,
-    runs = character(), parameters = character(), runtime_seconds_per_stage = numeric(),
-    flags = character(), input_root = NULL, output_root = NULL) {
+    output_paths = character(), accession = NULL, bioproject_id = NULL, runs = character(),
+    parameters = character(), runtime_seconds_per_stage = numeric(), flags = character(),
+    input_root = NULL, output_root = NULL) {
     if (!inherits(library_report, "selexprep_library_report")) {
         stop("`library_report` must be a selexprep_library_report.", call. = FALSE)
     }
-    .new_selexprep_manifest(list(
-        manifest_version = "selexprep_manifest_v2",
-        selexprep_version = .selexprep_version(),
-        r_version = as.character(getRversion()),
-        bioconductor_version = .bioconductor_version(),
-        accession = accession,
-        bioproject_id = bioproject_id,
-        runs = runs,
-        input_sha256 = .hash_paths(input_paths, root = input_root),
-        output_sha256 = .hash_paths(output_paths, root = output_root),
-        library_report = .library_report_payload(library_report),
-        extraction_mode = library_report$extraction_mode,
-        read_source = library_report$read_source,
-        required_action = library_report$required_action,
-        full_insert_recovered = library_report$full_insert_recovered,
-        parameters = parameters,
-        runtime_seconds_per_stage = runtime_seconds_per_stage,
-        flags = flags,
-        sampling_seed = library_report$sampling_seed
-    ))
+    .new_selexprep_manifest(list(manifest_version = "selexprep_manifest_v2", selexprep_version = .selexprep_version(),
+        r_version = as.character(getRversion()), bioconductor_version = .bioconductor_version(),
+        accession = accession, bioproject_id = bioproject_id, runs = runs, input_sha256 = .hash_paths(input_paths,
+            root = input_root), output_sha256 = .hash_paths(output_paths, root = output_root),
+        library_report = .library_report_payload(library_report), extraction_mode = library_report$extraction_mode,
+        read_source = library_report$read_source, required_action = library_report$required_action,
+        full_insert_recovered = library_report$full_insert_recovered, parameters = parameters,
+        runtime_seconds_per_stage = runtime_seconds_per_stage, flags = flags, sampling_seed = library_report$sampling_seed))
 }
-
 #' Write a selexprep manifest as deterministic JSON
 #'
 #' @param manifest A `selexprep_manifest`.
@@ -276,22 +234,23 @@ build_selexprep_manifest <- function(library_report, input_paths = character(),
 #' @return The SHA-256 digest of the emitted UTF-8 JSON, invisibly.
 #' @export
 #' @examples
-#' p5 <- "GGTAATACGACTCACTATAGGG"
-#' p3 <- "CCATGCATGCATGCATGCAT"
-#' report <- selexprep_detect(list(round_00 = rep(paste0(p5, "ACGTACGTACGTACGT", p3), 500)))
-#' path <- tempfile(fileext = ".json")
+#' p5 <- 'GGTAATACGACTCACTATAGGG'
+#' p3 <- 'CCATGCATGCATGCATGCAT'
+#' report <- selexprep_detect(list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500)))
+#' path <- tempfile(fileext = '.json')
 #' write_selexprep_manifest(build_selexprep_manifest(report), path)
 write_selexprep_manifest <- function(manifest, path) {
     payload <- .manifest_payload(manifest)
-    json <- jsonlite::toJSON(payload, auto_unbox = TRUE, pretty = TRUE, null = "null", digits = NA)
+    json <- jsonlite::toJSON(payload, auto_unbox = TRUE, pretty = TRUE, null = "null",
+        digits = NA)
     for (name in c("input_sha256", "output_sha256", "parameters", "runtime_seconds_per_stage")) {
-        json <- sub(sprintf('"%s": []', name), sprintf('"%s": {}', name), json, fixed = TRUE)
+        json <- sub(sprintf("\"%s\": []", name), sprintf("\"%s\": {}", name), json,
+            fixed = TRUE)
     }
     text <- paste0(json, "\n")
     writeLines(json, con = path, useBytes = TRUE)
     invisible(digest::digest(text, algo = "sha256", serialize = FALSE))
 }
-
 #' Read a selexprep manifest JSON file
 #'
 #' Reads and validates both the portable Python `selexprep_manifest_v1` format
@@ -302,10 +261,10 @@ write_selexprep_manifest <- function(manifest, path) {
 #' @return A validated `selexprep_manifest`.
 #' @export
 #' @examples
-#' p5 <- "GGTAATACGACTCACTATAGGG"
-#' p3 <- "CCATGCATGCATGCATGCAT"
-#' report <- selexprep_detect(list(round_00 = rep(paste0(p5, "ACGTACGTACGTACGT", p3), 500)))
-#' path <- tempfile(fileext = ".json")
+#' p5 <- 'GGTAATACGACTCACTATAGGG'
+#' p3 <- 'CCATGCATGCATGCATGCAT'
+#' report <- selexprep_detect(list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500)))
+#' path <- tempfile(fileext = '.json')
 #' write_selexprep_manifest(build_selexprep_manifest(report), path)
 #' read_selexprep_manifest(path)
 read_selexprep_manifest <- function(path) {

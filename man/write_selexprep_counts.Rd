@@ -20,7 +20,7 @@ portable exchange format; Parquet is available when the optional \code{arrow}
 package is installed.
 }
 \examples{
-counts <- selexprep_count(c("ACGT", "ACGT", "GGGG"))
-path <- tempfile(fileext = ".tsv")
+counts <- selexprep_count(c('ACGT', 'ACGT', 'GGGG'))
+path <- tempfile(fileext = '.tsv')
 write_selexprep_counts(counts, path)
 }

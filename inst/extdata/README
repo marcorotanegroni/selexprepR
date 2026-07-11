@@ -1,10 +1,18 @@
-This catalog is a snapshot of the curated metadata shipped by the original
-selexprep project, imported during the R migration. It is included as package
-data so discovery is reproducible and works without network access.
+`selexprep_catalog.csv` is the canonical flat source used to build the
+`selexprep_public_catalog` package dataset. It contains 240 public HT-SELEX
+deposits from ENA, Figshare, and Zenodo, with eight curated experimental fields
+and a reconciliation status for each field.
 
-The records are derived from public ENA study metadata and are distributed as
-part of this package under its MIT license.
+The snapshot was migrated byte-for-byte from the original Python project. Run
+`inst/scripts/make-selexprep-public-catalog.R` from the package source root to
+verify its SHA-256, schema, identifiers, and statuses before rebuilding the
+`.rda` dataset.
 
-The catalog is metadata only. Before downloading data, use
-inspect_selexprep_accession() to obtain current ENA records and verify that an
-accession is still available.
+The package code is MIT-licensed. The catalog is factual public-record metadata;
+the underlying records and publications remain subject to their originating
+terms. See `inst/CATALOG_PROVENANCE.md` for sources, curation disclosure, and
+immutable provenance links.
+
+This is a frozen discovery snapshot, not a live availability claim. Before
+downloading ENA data, use `inspect_selexprep_accession()` to obtain current
+records and verify that an accession is still available.

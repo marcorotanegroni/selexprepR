@@ -19,7 +19,7 @@ Reads the stable four-column count contract (\code{sequence}, \code{reads}, \cod
 requires \code{arrow}; TSV is the portable default for R-native workflows.
 }
 \examples{
-path <- tempfile(fileext = ".tsv")
-write_selexprep_counts(selexprep_count(c("ACGT", "ACGT", "GGGG")), path)
+path <- tempfile(fileext = '.tsv')
+write_selexprep_counts(selexprep_count(c('ACGT', 'ACGT', 'GGGG')), path)
 read_selexprep_counts(path)
 }

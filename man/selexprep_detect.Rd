@@ -16,8 +16,8 @@ selexprep_detect(
 \item{sequences_by_round}{A named list of character vectors or
 \code{Biostrings::XStringSet} objects. Each element is one sequencing round.}
 
-\item{read_source}{One of \code{"R1"}, \code{"R2"}, \code{"R1_AND_R2"}, \code{"INTERLEAVED"},
-or \code{"UNKNOWN"}.}
+\item{read_source}{One of \code{'R1'}, \code{'R2'}, \code{'R1_AND_R2'}, \code{'INTERLEAVED'},
+or \code{'UNKNOWN'}.}
 
 \item{paired_mate_streams}{Optional named list containing the corresponding
 R2 sequences. Required only to detect split-primer paired-end layouts.}
@@ -38,7 +38,7 @@ evidence is insufficient, it returns an explicit safe-failure report rather
 than guessing.
 }
 \examples{
-p5 <- "GGTAATACGACTCACTATAGGG"
-p3 <- "CCATGCATGCATGCATGCAT"
-selexprep_detect(list(round_00 = rep(paste0(p5, "ACGTACGTACGTACGT", p3), 500)))
+p5 <- 'GGTAATACGACTCACTATAGGG'
+p3 <- 'CCATGCATGCATGCATGCAT'
+selexprep_detect(list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500)))
 }
