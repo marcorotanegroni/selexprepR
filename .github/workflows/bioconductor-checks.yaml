@@ -1,5 +1,8 @@
 name: Bioconductor checks
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [codex/ci]
@@ -22,27 +25,59 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v2
 
+      - uses: r-lib/actions/setup-tinytex@v2
+
       - name: Install package and verification dependencies
         shell: Rscript {0}
         run: |
           install.packages("BiocManager")
           BiocManager::install(
-            c("BiocCheck", "BiocStyle", "Biostrings", "S4Vectors", "SummarizedExperiment"),
-            ask = FALSE,
-            update = TRUE,
-            version = "devel"
+            version = "devel",
+            ask = FALSE
           )
-          install.packages(c("digest", "httr2", "jsonlite", "knitr", "rmarkdown", "testthat"))
+          BiocManager::install(
+            c(
+              "arrow", "BiocCheck", "BiocStyle", "Biostrings", "digest",
+              "httr2", "jsonlite", "knitr", "Matrix", "rmarkdown",
+              "S4Vectors", "SummarizedExperiment", "testthat", "withr"
+            ),
+            ask = FALSE,
+            update = TRUE
+          )
+          stopifnot(BiocManager::valid())
 
       - name: Build source package
         run: R CMD build .
 
       - name: R CMD check
-        run: R CMD check --no-manual selexprep_*.tar.gz
+        run: R CMD check --no-build-vignettes selexprepR_*.tar.gz
 
-      - name: BiocCheck submission source
-        shell: bash
+      - name: BiocCheck new package
+        shell: Rscript {0}
         run: |
-          mkdir submission-source
-          tar -xzf selexprep_*.tar.gz -C submission-source
-          Rscript -e 'BiocCheck::BiocCheck("submission-source/selexprep", `quit-with-status` = TRUE)'
+          tarball <- Sys.glob("selexprepR_*.tar.gz")
+          stopifnot(length(tarball) == 1L)
+          BiocCheck::BiocCheck(
+            tarball,
+            `new-package` = TRUE,
+            `quit-with-status` = TRUE
+          )
+
+      - name: BiocCheck Git clone
+        shell: Rscript {0}
+        run: |
+          BiocCheck::BiocCheckGitClone(
+            ".",
+            `quit-with-status` = TRUE
+          )
+
+      - name: Upload check artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selexprepR-check-results
+          path: |
+            selexprepR_*.tar.gz
+            *.Rcheck/**
+            *.BiocCheck/**
+          if-no-files-found: warn
