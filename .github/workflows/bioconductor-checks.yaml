@@ -5,7 +5,7 @@ permissions:
 
 on:
   push:
-    branches: [codex/ci]
+    branches: [bioc-checks]
   pull_request:
     branches: [main]
   workflow_dispatch:
