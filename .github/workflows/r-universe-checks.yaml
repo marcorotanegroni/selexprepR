@@ -1,0 +1,17 @@
+name: R-universe checks
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [bioc-checks]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Bioconductor R-universe
+    uses: r-universe-org/workflows/.github/workflows/build.yml@v3
+    with:
+      universe: bioc
+      organization: bioconductor
