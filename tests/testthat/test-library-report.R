@@ -96,6 +96,8 @@ test_that("LibraryReport JSON is deterministic and round-trips", {
     expect_identical(readBin(path_a, "raw", n = file.info(path_a)$size),
         readBin(path_b, "raw", n = file.info(path_b)$size)
     )
+    output_bytes <- readBin(path_a, "raw", n = file.info(path_a)$size)
+    expect_false(as.raw(0x0d) %in% output_bytes)
     expect_false(endsWith(readChar(path_a, nchars = file.info(path_a)$size), "\n\n"))
     expect_equal(unclass(read_library_report(path_a)), unclass(report))
 })

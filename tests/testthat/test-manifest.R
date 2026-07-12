@@ -43,6 +43,8 @@ test_that("R-native manifests are deterministic, validated and preserve file has
     expect_identical(restored$output_sha256, manifest$output_sha256)
     expect_identical(readLines(path), readLines(second_path))
     expect_identical(first_hash, second_hash)
+    output_bytes <- readBin(path, "raw", n = file.info(path)$size)
+    expect_false(as.raw(0x0d) %in% output_bytes)
     expect_false(endsWith(readChar(path, nchars = file.info(path)$size), "\n\n"))
 })
 
