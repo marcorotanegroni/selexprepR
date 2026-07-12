@@ -680,7 +680,7 @@ write_library_report <- function(report, path) {
             json, perl = TRUE)
     }
     text <- paste0(json, "\n")
-    writeLines(json, con = path, useBytes = TRUE)
+    .write_utf8_lf(text, path)
     invisible(digest::digest(text, algo = "sha256", serialize = FALSE))
 }
 #' Read a LibraryReport JSON file

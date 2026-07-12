@@ -248,7 +248,7 @@ write_selexprep_manifest <- function(manifest, path) {
             fixed = TRUE)
     }
     text <- paste0(json, "\n")
-    writeLines(json, con = path, useBytes = TRUE)
+    .write_utf8_lf(text, path)
     invisible(digest::digest(text, algo = "sha256", serialize = FALSE))
 }
 #' Read a selexprep manifest JSON file

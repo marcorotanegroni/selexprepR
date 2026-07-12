@@ -1,3 +1,9 @@
+# selexprepR 0.99.3
+
+* Write LibraryReport and manifest JSON with UTF-8 LF line endings on every
+  platform, preserving deterministic hashes and Python golden-file parity on
+  Windows.
+
 # selexprepR 0.99.1
 
 * Initial Bioconductor submission candidate.

@@ -1,3 +1,9 @@
+.write_utf8_lf <- function(text, path) {
+    connection <- file(path, open = "wb")
+    on.exit(close(connection), add = TRUE)
+    writeBin(charToRaw(enc2utf8(text)), connection)
+    invisible(path)
+}
 .as_selexprep_count_table <- function(counts) {
     if (!inherits(counts, "DataFrame") && !is.data.frame(counts)) {
         stop("`counts` must be a DataFrame or data.frame.", call. = FALSE)
