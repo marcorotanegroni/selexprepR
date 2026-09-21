@@ -58,6 +58,7 @@ sides remain available in \code{metadata(result)$extraction}.
 \examples{
 p5 <- 'GGTAATACGACTCACTATAGGG'
 p3 <- 'CCATGCATGCATGCATGCAT'
-pools <- list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500))
+inserts <- c('ACGTACGTACGTACGT', 'TGCATGCATGCATGCA')
+pools <- list(round_00 = rep(paste0(p5, inserts, p3), each = 250))
 run_selexprep(pools, low_total_reads = 0)
 }

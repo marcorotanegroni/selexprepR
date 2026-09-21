@@ -284,7 +284,8 @@
 #' @examples
 #' p5 <- 'GGTAATACGACTCACTATAGGG'
 #' p3 <- 'CCATGCATGCATGCATGCAT'
-#' pools <- list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500))
+#' inserts <- c('ACGTACGTACGTACGT', 'TGCATGCATGCATGCA')
+#' pools <- list(round_00 = rep(paste0(p5, inserts, p3), each = 250))
 #' result <- run_selexprep(pools, low_total_reads = 0)
 #' selexprep_qc(result)
 selexprep_qc <- function(experiment, library_report = NULL, low_total_reads = 10000L,

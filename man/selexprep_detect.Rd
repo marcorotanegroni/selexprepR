@@ -40,5 +40,7 @@ than guessing.
 \examples{
 p5 <- 'GGTAATACGACTCACTATAGGG'
 p3 <- 'CCATGCATGCATGCATGCAT'
-selexprep_detect(list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500)))
+inserts <- c('ACGTACGTACGTACGT', 'TGCATGCATGCATGCA')
+reads <- rep(paste0(p5, inserts, p3), each = 250)
+selexprep_detect(list(round_00 = reads))
 }

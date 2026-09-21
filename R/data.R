@@ -8,8 +8,9 @@
 #' `S4Vectors::metadata(selexprep_public_catalog)`.
 #'
 #' Missing values mean that a field was not stated in the curated sources. A
-#' `discordant` status means that both extracted values are retained in the
-#' corresponding value column, separated by `' || '`.
+#' `adjudicated` means that the two extraction arms disagreed and the value
+#' was resolved using the source evidence. The canonical provenance JSON
+#' retains both original values and the adjudication rationale.
 #'
 #' @format An `S4Vectors::DataFrame` with 240 rows and 19 columns:
 #' \describe{
@@ -36,12 +37,12 @@
 #'     counter-selection conditions and their reconciliation status.}
 #' }
 #'
-#' Curation statuses are `concordant`, `discordant`, `not_stated`, `verified`,
+#' Curation statuses are `adjudicated`, `concordant`, `not_stated`, `verified`,
 #' `single_source:claude`, or `single_source:codex`.
 #'
 #' @source The snapshot was migrated without modification from the original
 #'   selexprep catalog at commit
-#'   `b6792637ec9bed78f131e8f63e12e155f733e9ae`. See the object metadata and
+#'   `0db8e3313a775e30c7bc961aa61d121e75c74467`. See the object metadata and
 #'   `inst/CATALOG_PROVENANCE.md` for immutable source links and terms.
 #' @usage data(selexprep_public_catalog)
 #' @keywords datasets

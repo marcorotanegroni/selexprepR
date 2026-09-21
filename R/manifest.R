@@ -208,7 +208,9 @@
 #' @examples
 #' p5 <- 'GGTAATACGACTCACTATAGGG'
 #' p3 <- 'CCATGCATGCATGCATGCAT'
-#' report <- selexprep_detect(list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500)))
+#' inserts <- c('ACGTACGTACGTACGT', 'TGCATGCATGCATGCA')
+#' reads <- rep(paste0(p5, inserts, p3), each = 250)
+#' report <- selexprep_detect(list(round_00 = reads))
 #' build_selexprep_manifest(report)
 build_selexprep_manifest <- function(library_report, input_paths = character(),
     output_paths = character(), accession = NULL, bioproject_id = NULL, runs = character(),
@@ -236,7 +238,9 @@ build_selexprep_manifest <- function(library_report, input_paths = character(),
 #' @examples
 #' p5 <- 'GGTAATACGACTCACTATAGGG'
 #' p3 <- 'CCATGCATGCATGCATGCAT'
-#' report <- selexprep_detect(list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500)))
+#' inserts <- c('ACGTACGTACGTACGT', 'TGCATGCATGCATGCA')
+#' reads <- rep(paste0(p5, inserts, p3), each = 250)
+#' report <- selexprep_detect(list(round_00 = reads))
 #' path <- tempfile(fileext = '.json')
 #' write_selexprep_manifest(build_selexprep_manifest(report), path)
 write_selexprep_manifest <- function(manifest, path) {
@@ -263,7 +267,9 @@ write_selexprep_manifest <- function(manifest, path) {
 #' @examples
 #' p5 <- 'GGTAATACGACTCACTATAGGG'
 #' p3 <- 'CCATGCATGCATGCATGCAT'
-#' report <- selexprep_detect(list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500)))
+#' inserts <- c('ACGTACGTACGTACGT', 'TGCATGCATGCATGCA')
+#' reads <- rep(paste0(p5, inserts, p3), each = 250)
+#' report <- selexprep_detect(list(round_00 = reads))
 #' path <- tempfile(fileext = '.json')
 #' write_selexprep_manifest(build_selexprep_manifest(report), path)
 #' read_selexprep_manifest(path)

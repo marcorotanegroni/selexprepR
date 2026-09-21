@@ -41,7 +41,8 @@ are unavailable instead of reconstructing them from incomplete summaries.
 \examples{
 p5 <- 'GGTAATACGACTCACTATAGGG'
 p3 <- 'CCATGCATGCATGCATGCAT'
-pools <- list(round_00 = rep(paste0(p5, 'ACGTACGT', p3), 500))
+inserts <- c('ACGTACGT', 'TGCATGCA')
+pools <- list(round_00 = rep(paste0(p5, inserts, p3), each = 250))
 result <- run_selexprep(pools, low_total_reads = 0)
 plot(S4Vectors::metadata(result)$qc, result, which = 'diversity')
 }

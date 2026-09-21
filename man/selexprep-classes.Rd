@@ -59,6 +59,8 @@ A description of the result classes and their stable list elements.
 \examples{
 p5 <- 'GGTAATACGACTCACTATAGGG'
 p3 <- 'CCATGCATGCATGCATGCAT'
-report <- selexprep_detect(list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500)))
+inserts <- c('ACGTACGTACGTACGT', 'TGCATGCATGCATGCA')
+reads <- rep(paste0(p5, inserts, p3), each = 250)
+report <- selexprep_detect(list(round_00 = reads))
 class(report)
 }

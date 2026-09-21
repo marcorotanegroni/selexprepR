@@ -30,13 +30,13 @@ format and its reconciliation status.}
 counter-selection conditions and their reconciliation status.}
 }
 
-Curation statuses are \code{concordant}, \code{discordant}, \code{not_stated}, \code{verified},
+Curation statuses are \code{adjudicated}, \code{concordant}, \code{not_stated}, \code{verified},
 \code{single_source:claude}, or \code{single_source:codex}.
 }
 \source{
 The snapshot was migrated without modification from the original
 selexprep catalog at commit
-\code{b6792637ec9bed78f131e8f63e12e155f733e9ae}. See the object metadata and
+\code{0db8e3313a775e30c7bc961aa61d121e75c74467}. See the object metadata and
 \code{inst/CATALOG_PROVENANCE.md} for immutable source links and terms.
 }
 \usage{
@@ -52,7 +52,8 @@ provenance-rich JSON and its generation materials are stored in
 }
 \details{
 Missing values mean that a field was not stated in the curated sources. A
-\code{discordant} status means that both extracted values are retained in the
-corresponding value column, separated by \code{' || '}.
+\code{adjudicated} means that the two extraction arms disagreed and the value
+was resolved using the source evidence. The canonical provenance JSON
+retains both original values and the adjudication rationale.
 }
 \keyword{datasets}

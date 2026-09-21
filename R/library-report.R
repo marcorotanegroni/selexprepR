@@ -163,8 +163,38 @@
     if (length(fragments) < min_sequences) {
         return(list(sequence = NULL, length = 0L, confidence = 0))
     }
+    supports <- detected$supports[seq_len(primer_length)]
     list(sequence = primer, length = as.integer(primer_length), confidence = mean(vapply(fragments,
-        .hamming_leq_one, logical(1), right = primer)))
+        .hamming_leq_one, logical(1), right = primer)),
+        supports = if (is_prefix) supports else rev(supports))
+}
+.high_support_core <- function(sequence, supports, is_prefix, min_support = 0.9,
+    min_length = 12L, stable_run = 3L) {
+    if (is.null(sequence) || length(supports) != nchar(sequence)) {
+        return(NULL)
+    }
+    ordered <- if (is_prefix) supports else rev(supports)
+    cut <- 0L
+    stable <- 0L
+    for (index in seq_along(ordered)) {
+        if (ordered[[index]] < min_support) {
+            cut <- index
+            stable <- 0L
+        } else {
+            stable <- stable + 1L
+            if (stable >= stable_run) {
+                break
+            }
+        }
+    }
+    if (!cut || nchar(sequence) - cut < min_length) {
+        return(NULL)
+    }
+    if (is_prefix) {
+        substr(sequence, cut + 1L, nchar(sequence))
+    } else {
+        substr(sequence, 1L, nchar(sequence) - cut)
+    }
 }
 .detect_primers <- function(sequences, confidence = 0.75, max_length = 60L, min_length = 14L,
     min_sequences = 500L) {
@@ -502,7 +532,9 @@
 #' @examples
 #' p5 <- 'GGTAATACGACTCACTATAGGG'
 #' p3 <- 'CCATGCATGCATGCATGCAT'
-#' selexprep_detect(list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500)))
+#' inserts <- c('ACGTACGTACGTACGT', 'TGCATGCATGCATGCA')
+#' reads <- rep(paste0(p5, inserts, p3), each = 250)
+#' selexprep_detect(list(round_00 = reads))
 selexprep_detect <- function(sequences_by_round, read_source = c("R1", "R2", "R1_AND_R2",
     "INTERLEAVED", "UNKNOWN"), paired_mate_streams = NULL, sampling_seed = 42L,
     max_reads_per_round = NULL) {
@@ -583,6 +615,25 @@ selexprep_detect <- function(sequences_by_round, read_source = c("R1", "R2", "R1
         earliest_threep <- threep_sequences[[earliest_name]]
         match_rate_5p <- .substring_match_rate(earliest_sequences, primer_5p)
         match_rate_3p <- .substring_match_rate(earliest_threep, primer_3p_lookup)
+        if (match_rate_5p <= 0.7 && !is.null(primer_5p) &&
+            identical(primer_5p, detection$primer_5p$sequence)) {
+            core <- .high_support_core(primer_5p, detection$primer_5p$supports,
+                is_prefix = TRUE)
+            if (!is.null(core)) {
+                match_rate_5p <- max(match_rate_5p,
+                    .substring_match_rate(earliest_sequences, core))
+            }
+        }
+        if (!has_paired_split && match_rate_3p <= 0.7 &&
+            !is.null(primer_3p_lookup) &&
+            identical(primer_3p_lookup, detection$primer_3p$sequence)) {
+            core <- .high_support_core(primer_3p_lookup,
+                detection$primer_3p$supports, is_prefix = FALSE)
+            if (!is.null(core)) {
+                match_rate_3p <- max(match_rate_3p,
+                    .substring_match_rate(earliest_threep, core))
+            }
+        }
         p5_length <- if (is.null(primer_5p))
             0L else nchar(primer_5p)
         p3_length <- if (is.null(primer_3p))
@@ -595,6 +646,19 @@ selexprep_detect <- function(sequences_by_round, read_source = c("R1", "R2", "R1
             list(mode = NULL, distribution = numeric(), confidence = 0)
         } else {
             .n_length_stats(earliest_sequences, p5_length, p3_length)
+        }
+        if (!is.null(n_lengths$mode) && n_lengths$mode == 0) {
+            return(.unable_library_report(
+                read_source,
+                sampling_seed,
+                paste(
+                    "Inferred random-region length is 0 nt: the flanks meet,",
+                    "so no constant/random boundary can be identified.",
+                    "If this is a SELEX library, supply reviewed primer_5p",
+                    "and primer_3p overrides to selexprep_extract()."
+                ),
+                adapter_hits
+            ))
         }
         has_round_map <- length(normalised) >= 2L
         confidence <- .composite_confidence(list(match_5p = match_rate_5p, match_3p = match_rate_3p,
@@ -646,7 +710,9 @@ selexprep_detect <- function(sequences_by_round, read_source = c("R1", "R2", "R1
 #' @examples
 #' p5 <- 'GGTAATACGACTCACTATAGGG'
 #' p3 <- 'CCATGCATGCATGCATGCAT'
-#' report <- selexprep_detect(list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500)))
+#' inserts <- c('ACGTACGTACGTACGT', 'TGCATGCATGCATGCA')
+#' reads <- rep(paste0(p5, inserts, p3), each = 250)
+#' report <- selexprep_detect(list(round_00 = reads))
 #' path <- tempfile(fileext = '.json')
 #' write_library_report(report, path)
 write_library_report <- function(report, path) {
@@ -693,7 +759,9 @@ write_library_report <- function(report, path) {
 #' @examples
 #' p5 <- 'GGTAATACGACTCACTATAGGG'
 #' p3 <- 'CCATGCATGCATGCATGCAT'
-#' report <- selexprep_detect(list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500)))
+#' inserts <- c('ACGTACGTACGTACGT', 'TGCATGCATGCATGCA')
+#' reads <- rep(paste0(p5, inserts, p3), each = 250)
+#' report <- selexprep_detect(list(round_00 = reads))
 #' path <- tempfile(fileext = '.json')
 #' write_library_report(report, path)
 #' read_library_report(path)

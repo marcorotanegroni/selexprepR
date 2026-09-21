@@ -28,7 +28,8 @@
 #' @examples
 #' p5 <- 'GGTAATACGACTCACTATAGGG'
 #' p3 <- 'CCATGCATGCATGCATGCAT'
-#' pools <- list(round_00 = rep(paste0(p5, 'ACGTACGTACGTACGT', p3), 500))
+#' inserts <- c('ACGTACGTACGTACGT', 'TGCATGCATGCATGCA')
+#' pools <- list(round_00 = rep(paste0(p5, inserts, p3), each = 250))
 #' run_selexprep(pools, low_total_reads = 0)
 run_selexprep <- function(sequences_by_round, read_source = c("R1", "R2", "R1_AND_R2",
     "INTERLEAVED", "UNKNOWN"), paired_mate_streams = NULL, accession = NULL, sampling_seed = 42L,

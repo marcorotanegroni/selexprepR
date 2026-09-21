@@ -6,6 +6,9 @@ test_that("bundled catalog is available offline and can be queried", {
     expect_identical(dim(catalog), c(240L, 19L))
     expect_false(anyDuplicated(catalog$bioproject_id) > 0L)
     expect_identical(as.character(fgf$bioproject_id[[1L]]), "PRJDB19098")
+    statuses <- as.matrix(as.data.frame(catalog[grep("_curation$", names(catalog))]))
+    expect_identical(sum(statuses == "adjudicated"), 47L)
+    expect_false(any(statuses == "discordant"))
 })
 
 test_that("package dataset and accessor expose the reviewed snapshot", {
@@ -26,13 +29,13 @@ test_that("package dataset and accessor expose the reviewed snapshot", {
     expect_identical(dataset, selexprep_catalog())
     expect_identical(
         provenance$snapshot_version,
-        "v0.2.1-dual-extraction-2026-07-03"
+        "v0.3.2-dual-extraction-adjudicated-en-2026-09-04"
     )
     expect_identical(
         provenance$source_sha256,
         paste0(
-            "9e11bc3868816e769da3ae50c159bb14e679e790be6de106b0ede3756",
-            "caa1cb9"
+            "e67b7b77f9d60b6ae6a686099c2a524ae59f50fbaa446aece7ea607f",
+            "dc007fef"
         )
     )
 })

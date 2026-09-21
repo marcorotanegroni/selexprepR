@@ -6,8 +6,8 @@ if (!file.exists(description_path) || !file.exists(catalog_path)) {
 }
 
 expected_sha256 <- paste0(
-    "9e11bc3868816e769da3ae50c159bb14e679e790be6de106b0ede3756",
-    "caa1cb9"
+    "e67b7b77f9d60b6ae6a686099c2a524ae59f50fbaa446aece7ea607f",
+    "dc007fef"
 )
 expected_columns <- c(
     "bioproject_id", "source", "study_title",
@@ -21,7 +21,7 @@ expected_columns <- c(
     "counter_selection", "counter_selection_curation"
 )
 expected_statuses <- c(
-    "concordant", "discordant", "not_stated", "verified",
+    "adjudicated", "concordant", "not_stated", "verified",
     "single_source:claude", "single_source:codex"
 )
 
@@ -61,27 +61,27 @@ selexprep_public_catalog <- S4Vectors::DataFrame(
     check.names = FALSE
 )
 S4Vectors::metadata(selexprep_public_catalog) <- list(
-    snapshot_version = "v0.2.1-dual-extraction-2026-07-03",
-    snapshot_date = "2026-07-03",
+    snapshot_version = "v0.3.2-dual-extraction-adjudicated-en-2026-09-04",
+    snapshot_date = "2026-09-04",
     source_repository = "https://github.com/marcorotanegroni/selexprep",
-    source_commit = "b6792637ec9bed78f131e8f63e12e155f733e9ae",
+    source_commit = "0db8e3313a775e30c7bc961aa61d121e75c74467",
     source_file = paste0(
         "src/selexprep/catalog/data/curated_metadata.csv"
     ),
     source_sha256 = source_sha256,
     source_url = paste0(
         "https://raw.githubusercontent.com/marcorotanegroni/selexprep/",
-        "b6792637ec9bed78f131e8f63e12e155f733e9ae/",
+        "0db8e3313a775e30c7bc961aa61d121e75c74467/",
         "src/selexprep/catalog/data/curated_metadata.csv"
     ),
     provenance_url = paste0(
         "https://raw.githubusercontent.com/marcorotanegroni/selexprep/",
-        "b6792637ec9bed78f131e8f63e12e155f733e9ae/",
+        "0db8e3313a775e30c7bc961aa61d121e75c74467/",
         "src/selexprep/catalog/data/curated_metadata.json"
     ),
     curation_method = paste(
         "Independent Claude and Codex/GPT extraction, followed by",
-        "status-preserving reconciliation."
+        "reconciliation and adjudication of disagreements."
     ),
     terms_notice = paste(
         "The package code is MIT-licensed. Public record metadata remains",

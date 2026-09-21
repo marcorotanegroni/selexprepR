@@ -56,9 +56,9 @@ test_that("run_selexprep does not count half-inserts from a split pair", {
 test_that("run_selexprep exposes extraction provenance to QC", {
     primer_5p <- "GGTAATACGACTCACTATAGGG"
     primer_3p <- "CCATGCATGCATGCATGCAT"
-    forward <- paste0(primer_5p, "ACGT", primer_3p)
+    forward <- paste0(primer_5p, c("ACGT", "TGCA"), primer_3p)
     reverse <- reverse_complement(forward)
-    reads <- c(rep(forward, 400L), rep(reverse, 125L))
+    reads <- c(rep(forward, each = 200L), rep(reverse, length.out = 125L))
 
     experiment <- run_selexprep(
         list(round_00 = reads),
