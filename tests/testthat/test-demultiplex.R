@@ -73,12 +73,14 @@ test_that("unsafe barcode codes and invalid arguments are rejected", {
 test_that("demultiplexed inputs run directly through the pipeline", {
     primer_5p <- "GGTAATACGACTCACTATAGGG"
     primer_3p <- "CCATGCATGCATGCATGCAT"
-    reads <- rep(paste0("AAAAA", primer_5p, "ACGT", primer_3p), 500L)
+    inserts <- c("ACGTACGTACGTACGT", "TGCATGCATGCATGCA")
+    reads <- rep(paste0("AAAAA", primer_5p, inserts, primer_3p), each = 250L)
     inputs <- selexprep_demultiplex(reads, c(AAAAA = 0L))
 
     experiment <- run_selexprep(inputs, low_total_reads = 0)
 
     expect_s4_class(experiment, "SummarizedExperiment")
+    expect_equal(sum(SummarizedExperiment::assay(experiment)), 500)
     provenance <- S4Vectors::metadata(experiment)$demultiplex
     expect_identical(provenance$unassigned_reads, 0L)
     expect_identical(provenance$barcodes, c(AAAAA = 0L))
