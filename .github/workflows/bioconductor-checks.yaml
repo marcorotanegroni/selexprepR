@@ -1,0 +1,103 @@
+name: Bioconductor checks
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [main, bioc-checks]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: R 4.6.1 / Bioconductor devel
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.6.1'
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-pandoc@v2
+
+      - uses: r-lib/actions/setup-tinytex@v2
+
+      - name: Install package and verification dependencies
+        shell: Rscript {0}
+        run: |
+          install.packages("BiocManager")
+          BiocManager::install(
+            version = "devel",
+            ask = FALSE
+          )
+          required <- c(
+            "arrow", "BiocCheck", "BiocStyle", "Biostrings", "digest",
+            "httr2", "jsonlite", "knitr", "Matrix", "rmarkdown",
+            "S4Vectors", "SummarizedExperiment", "testthat", "withr"
+          )
+          missing <- required
+          for (attempt in seq_len(3L)) {
+            BiocManager::install(
+              missing,
+              ask = FALSE,
+              update = TRUE,
+              force = attempt > 1L
+            )
+            available <- vapply(
+              required,
+              requireNamespace,
+              logical(1L),
+              quietly = TRUE
+            )
+            missing <- required[!available]
+            if (!length(missing)) {
+              break
+            }
+            message("Dependency attempt ", attempt, " left missing: ",
+                    toString(missing))
+          }
+          if (length(missing)) {
+            stop("Required packages remain unavailable: ", toString(missing))
+          }
+          stopifnot(BiocManager::valid())
+
+      - name: BiocCheck Git clone
+        shell: Rscript {0}
+        run: |
+          BiocCheck::BiocCheckGitClone(
+            ".",
+            `quit-with-status` = TRUE
+          )
+
+      - name: Build source package
+        run: R CMD build .
+
+      - name: R CMD check
+        run: R CMD check --no-build-vignettes selexprepR_*.tar.gz
+
+      - name: BiocCheck new package
+        shell: Rscript {0}
+        run: |
+          tarball <- Sys.glob("selexprepR_*.tar.gz")
+          stopifnot(length(tarball) == 1L)
+          BiocCheck::BiocCheck(
+            tarball,
+            `new-package` = TRUE,
+            `quit-with-status` = TRUE
+          )
+
+      - name: Upload check artifacts
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: selexprepR-check-results
+          path: |
+            selexprepR_*.tar.gz
+            *.Rcheck/**
+            *.BiocCheck/**
+          if-no-files-found: ignore
