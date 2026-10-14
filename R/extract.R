@@ -9,13 +9,13 @@
     }, character(1)), collapse = "")
 }
 .has_hamming_prefix <- function(sequence, primer) {
-    sequence <- toupper(chartr("U", "T", sequence))
-    primer <- toupper(chartr("U", "T", primer))
+    sequence <- chartr("U", "T", toupper(sequence))
+    primer <- chartr("U", "T", toupper(primer))
     nchar(sequence) >= nchar(primer) && .hamming_leq_one(substr(sequence, 1L, nchar(primer)),
         primer)
 }
 .normalise_adapter_alphabet <- function(sequence) {
-    toupper(chartr("U", "T", sequence))
+    chartr("U", "T", toupper(sequence))
 }
 .adapter_match <- function(sequence, primer) {
     sequence <- .normalise_adapter_alphabet(sequence)
@@ -49,7 +49,8 @@
     }
     substr(sequence, 1L, match[["start"]] - 1L)
 }
-.trim_round <- function(sequences, mode, primer_5p, primer_3p) {
+.trim_round <- function(sequences, mode, primer_5p, primer_3p,
+    keep_mask = FALSE) {
     kept <- switch(mode, BOTH_PRIMERS_SINGLE_READ = vapply(sequences, function(sequence) {
         match_5p <- .adapter_match(sequence, primer_5p)
         if (is.null(match_5p)) {
@@ -74,7 +75,12 @@
         }
         .before_adapter_match(sequence, match_3p)
     }, character(1)), stop("Unsupported single-read extraction mode.", call. = FALSE))
-    kept[!is.na(kept)]
+    keep <- !is.na(kept)
+    result <- kept[keep]
+    if (keep_mask) {
+        attr(result, "kept") <- keep
+    }
+    result
 }
 .strand_distribution <- function(sequences, primer_5p, primer_3p) {
     reverse_3p <- if (is.null(primer_3p)) {
@@ -94,12 +100,43 @@
     }
     c(forward = forward, reverse = reverse, ambiguous = ambiguous)
 }
+.low_yield_rounds <- function(input_reads, output_reads, label = "round") {
+    nonempty <- input_reads > 0
+    fractions <- output_reads[nonempty] / input_reads[nonempty]
+    if (!length(fractions)) {
+        return(character())
+    }
+    best <- max(fractions)
+    low <- fractions < 0.5 | fractions < 0.5 * best
+    rounds <- names(fractions)[low]
+    descriptions <- sprintf(
+        "%s: kept %s of %s reads (%.1f%%; best %s %.1f%%)",
+        rounds, output_reads[rounds], input_reads[rounds],
+        100 * fractions[low], label, 100 * best
+    )
+    stats::setNames(descriptions, rounds)
+}
+
 .new_extraction <- function(mode, full_insert_recovered, sequences_by_round, input_reads,
-    output_reads, strand_distribution = list()) {
-    structure(list(extraction_mode = mode, full_insert_recovered = full_insert_recovered,
+    output_reads, strand_distribution = list(), kept_by_round = NULL) {
+    low_yield <- .low_yield_rounds(input_reads, output_reads)
+    if (length(low_yield)) {
+        warning(paste0(
+            "Extraction: ", length(low_yield),
+            " round(s) kept under half of their reads or under half the best ",
+            "round's yield; the primers may not fit their reads ",
+            "(run-specific outer sequence or a different construct): ",
+            paste(low_yield, collapse = "; ")
+        ), call. = FALSE)
+    }
+    result <- structure(list(extraction_mode = mode, full_insert_recovered = full_insert_recovered,
         sequences_by_round = sequences_by_round, input_reads = input_reads, output_reads = output_reads,
-        strand_distribution = strand_distribution), class = c("selexprep_extraction",
+        strand_distribution = strand_distribution, low_yield_rounds = low_yield), class = c("selexprep_extraction",
         "list"))
+    if (!is.null(kept_by_round)) {
+        attr(result, "kept_by_round") <- kept_by_round
+    }
+    result
 }
 
 .validate_primer_override <- function(primer, argument) {
@@ -217,7 +254,9 @@
 #'
 #' @return A `selexprep_extraction`. Full and single-primer modes store one
 #'   `Biostrings::BStringSet` per round; paired split mode stores an `r1` and
-#'   `r2` `BStringSet` for every round.
+#'   `r2` `BStringSet` for every round. `low_yield_rounds` is a named character
+#'   vector describing nonempty rounds retaining less than half their reads or
+#'   less than half the best round's yield; these rounds also emit a warning.
 #' @export
 #'
 #' @examples
@@ -233,6 +272,17 @@
 selexprep_extract <- function(sequences_by_round, library_report,
     paired_mate_streams = NULL, primer_5p = NULL, primer_3p = NULL,
     extraction_mode = NULL) {
+    .extract_selexprep(
+        sequences_by_round, library_report,
+        paired_mate_streams = paired_mate_streams,
+        primer_5p = primer_5p, primer_3p = primer_3p,
+        extraction_mode = extraction_mode
+    )
+}
+
+.extract_selexprep <- function(sequences_by_round, library_report,
+    paired_mate_streams = NULL, primer_5p = NULL, primer_3p = NULL,
+    extraction_mode = NULL, keep_masks = FALSE) {
     if (!inherits(library_report, "selexprep_library_report")) {
         stop("`library_report` must be a selexprep_library_report.", call. = FALSE)
     }
@@ -289,13 +339,26 @@ selexprep_extract <- function(sequences_by_round, library_report,
                 }
             }
             keep <- !is.na(trimmed_r1)
-            list(r1 = Biostrings::BStringSet(unname(trimmed_r1[keep])), r2 = Biostrings::BStringSet(unname(trimmed_r2[keep])))
+            result <- list(r1 = Biostrings::BStringSet(unname(trimmed_r1[keep])),
+                r2 = Biostrings::BStringSet(unname(trimmed_r2[keep])))
+            if (keep_masks) {
+                attr(result, "kept") <- keep
+            }
+            result
         })
         names(extracted) <- names(pools)
+        kept_by_round <- NULL
+        if (keep_masks) {
+            kept_by_round <- lapply(extracted, attr, which = "kept")
+            extracted <- lapply(extracted, function(round) {
+                attr(round, "kept") <- NULL
+                round
+            })
+        }
         input_reads <- vapply(pools, length, numeric(1))
         output_reads <- vapply(extracted, function(round) length(round$r1), numeric(1))
         return(.new_extraction(mode, FALSE, extracted, input_reads, output_reads,
-            strand_distribution))
+            strand_distribution, kept_by_round = kept_by_round))
     }
     if (identical(mode, "BOTH_PRIMERS_SINGLE_READ") && (is.null(library_report$primer_5p) ||
         is.null(library_report$primer_3p))) {
@@ -308,10 +371,16 @@ selexprep_extract <- function(sequences_by_round, library_report,
         stop("Three-prime extraction requires a 3' primer.", call. = FALSE)
     }
     extracted <- lapply(pools, .trim_round, mode = mode, primer_5p = library_report$primer_5p,
-        primer_3p = library_report$primer_3p)
+        primer_3p = library_report$primer_3p, keep_mask = keep_masks)
+    kept_by_round <- if (keep_masks) {
+        lapply(extracted, attr, which = "kept")
+    } else {
+        NULL
+    }
     extracted <- lapply(extracted, function(sequences) {
         Biostrings::BStringSet(unname(sequences))
     })
     .new_extraction(mode, library_report$full_insert_recovered, extracted, vapply(pools,
-        length, numeric(1)), vapply(extracted, length, numeric(1)), strand_distribution)
+        length, numeric(1)), vapply(extracted, length, numeric(1)), strand_distribution,
+        kept_by_round = kept_by_round)
 }

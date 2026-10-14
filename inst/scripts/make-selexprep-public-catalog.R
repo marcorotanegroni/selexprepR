@@ -6,8 +6,8 @@ if (!file.exists(description_path) || !file.exists(catalog_path)) {
 }
 
 expected_sha256 <- paste0(
-    "e67b7b77f9d60b6ae6a686099c2a524ae59f50fbaa446aece7ea607f",
-    "dc007fef"
+    "121b599786a718d877bd950660a3a4e0ec178db2f1b54636815d575185",
+    "c3e0fe"
 )
 expected_columns <- c(
     "bioproject_id", "source", "study_title",
@@ -61,22 +61,22 @@ selexprep_public_catalog <- S4Vectors::DataFrame(
     check.names = FALSE
 )
 S4Vectors::metadata(selexprep_public_catalog) <- list(
-    snapshot_version = "v0.3.2-dual-extraction-adjudicated-en-2026-09-04",
-    snapshot_date = "2026-09-04",
+    snapshot_version = "selexprep-v0.4.6",
+    snapshot_date = "2026-10-02",
     source_repository = "https://github.com/marcorotanegroni/selexprep",
-    source_commit = "0db8e3313a775e30c7bc961aa61d121e75c74467",
+    source_commit = "63f33b44bb381c2c6b6ed131f3b98e8d6ff9d5f5",
     source_file = paste0(
         "src/selexprep/catalog/data/curated_metadata.csv"
     ),
     source_sha256 = source_sha256,
     source_url = paste0(
         "https://raw.githubusercontent.com/marcorotanegroni/selexprep/",
-        "0db8e3313a775e30c7bc961aa61d121e75c74467/",
+        "63f33b44bb381c2c6b6ed131f3b98e8d6ff9d5f5/",
         "src/selexprep/catalog/data/curated_metadata.csv"
     ),
     provenance_url = paste0(
         "https://raw.githubusercontent.com/marcorotanegroni/selexprep/",
-        "0db8e3313a775e30c7bc961aa61d121e75c74467/",
+        "63f33b44bb381c2c6b6ed131f3b98e8d6ff9d5f5/",
         "src/selexprep/catalog/data/curated_metadata.json"
     ),
     curation_method = paste(

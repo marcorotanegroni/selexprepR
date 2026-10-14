@@ -9,6 +9,9 @@
 \alias{selexprep_fetch_result}
 \alias{selexprep_read_inputs}
 \title{selexprepR result objects}
+\value{
+A description of the result classes and their stable list elements.
+}
 \description{
 The package uses lightweight S3 lists for decision records and reports, while
 sequence abundance data use the standard Bioconductor \code{SummarizedExperiment}
@@ -28,7 +31,11 @@ overall \code{confidence}, \code{status}, and an optional \code{failure_reason}.
 \item \code{selexprep_extraction} stores \code{extraction_mode},
 \code{full_insert_recovered}, primer-stripped \code{sequences_by_round}, named
 \code{input_reads} and \code{output_reads} counts, and the pre-trim
-forward/reverse/ambiguous \code{strand_distribution} for each round.
+forward/reverse/ambiguous \code{strand_distribution} for each round, plus
+named \code{low_yield_rounds} diagnostics for pools with poor read retention.
+Workflows receiving FASTQ input bundles also retain an \code{input_yields}
+\code{DataFrame} and named \code{low_yield_inputs} diagnostics per R1 FASTQ (joint
+pair retention for paired split extraction).
 \item \code{selexprep_qc} stores a \code{per_round} metrics \code{DataFrame}, a pairwise
 \code{round_similarity} \code{DataFrame}, a \code{flags} \code{DataFrame} whose \code{evidence}
 column contains structured lists, and the applied \code{settings}.
@@ -39,9 +46,11 @@ flags, and sampling seed. Readers accept portable Python v1 and R-native
 v2 schemas.
 \item \code{selexprep_inspection} stores the requested \code{accession}, BioProject ID,
 study title, library strategy/source, and a run-level \code{runs} \code{DataFrame}
-containing accessions, titles, sizes, FASTQ URLs, and checksums.
+containing accessions, titles, sizes, FASTQ URLs, checksums, per-run
+\code{library_strategy}, and a \code{sample_attributes} list-column from ENA XML.
 \item \code{selexprep_fetch_result} stores the resolved run-level download \code{plan},
-\code{downloaded_files}, and the \code{dry_run} status.
+\code{downloaded_files}, the \code{dry_run} status, and \code{rounds_with_several_samples}
+mapping assigned rounds to runs drawn from distinct BioSamples.
 \item \code{selexprep_read_inputs} stores round-aware R1 pools, optional R2 pools,
 the inferred \code{read_source}, and a file-level provenance \code{DataFrame}.
 \item \code{selexprep_demultiplex} extends \code{selexprep_read_inputs} with unassigned
@@ -52,9 +61,6 @@ S3 lists are used for these small decision and provenance records because
 their named elements map losslessly to the versioned JSON contracts. The
 high-dimensional assay remains a standard \code{SummarizedExperiment} with a
 sparse \code{Matrix} assay.
-}
-\value{
-A description of the result classes and their stable list elements.
 }
 \examples{
 p5 <- 'GGTAATACGACTCACTATAGGG'

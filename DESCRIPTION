@@ -1,6 +1,6 @@
 Package: selexprepR
 Title: Preprocessing Public HT-SELEX Sequencing Data
-Version: 0.99.4
+Version: 0.99.5
 Authors@R:
     person(given = "Marco", family = "Rota Negroni",
            email = "marco.rotanegroni@gmail.com",
@@ -23,7 +23,8 @@ Imports:
     Matrix,
     S4Vectors,
     SummarizedExperiment,
-    withr
+    withr,
+    xml2
 Suggests:
     arrow,
     BiocStyle,

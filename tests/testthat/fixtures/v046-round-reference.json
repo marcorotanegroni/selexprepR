@@ -1,0 +1,643 @@
+{
+  "source": {
+    "tag": "v0.4.6",
+    "commit": "63f33b44bb381c2c6b6ed131f3b98e8d6ff9d5f5",
+    "function": "selexprep.fetch.metadata.parse_round",
+    "method": "Executed source extracted by git show from the exact release tag."
+  },
+  "cases": [
+    {
+      "input": {
+        "sample_attributes": {
+          "selex cycle": "6"
+        }
+      },
+      "expected": {
+        "round_number": 6,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          6
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "Characteristics[selex cycle]": "6"
+        }
+      },
+      "expected": {
+        "round_number": 6,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          6
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "SELEX-round": "6"
+        }
+      },
+      "expected": {
+        "round_number": 6,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          6
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "selection cycle": "6"
+        }
+      },
+      "expected": {
+        "round_number": 6,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          6
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "Selection cycle": "6"
+        }
+      },
+      "expected": {
+        "round_number": 6,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          6
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "selex round": "6"
+        }
+      },
+      "expected": {
+        "round_number": 6,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          6
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "round of selex enrichment": "6"
+        }
+      },
+      "expected": {
+        "round_number": 6,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          6
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "round_selection": "6"
+        }
+      },
+      "expected": {
+        "round_number": 6,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          6
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "round": "6"
+        }
+      },
+      "expected": {
+        "round_number": 6,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          6
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "cycle number": "6"
+        }
+      },
+      "expected": {
+        "round_number": 6,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          6
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "round": "R3"
+        }
+      },
+      "expected": {
+        "round_number": 3,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          3
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "round": "round 3"
+        }
+      },
+      "expected": {
+        "round_number": 3,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          3
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "round": "Cycle-3"
+        }
+      },
+      "expected": {
+        "round_number": 3,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          3
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "round": "3"
+        }
+      },
+      "expected": {
+        "round_number": 3,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          3
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "cell cycle": "3"
+        }
+      },
+      "expected": {
+        "round_number": null,
+        "confidence": "NONE",
+        "source_field": "none",
+        "round_candidates": [],
+        "is_unassigned": true
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "cycle threshold": "3"
+        }
+      },
+      "expected": {
+        "round_number": null,
+        "confidence": "NONE",
+        "source_field": "none",
+        "round_candidates": [],
+        "is_unassigned": true
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "passage": "3"
+        }
+      },
+      "expected": {
+        "round_number": null,
+        "confidence": "NONE",
+        "source_field": "none",
+        "round_candidates": [],
+        "is_unassigned": true
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "library_selection": "3"
+        }
+      },
+      "expected": {
+        "round_number": null,
+        "confidence": "NONE",
+        "source_field": "none",
+        "round_candidates": [],
+        "is_unassigned": true
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "Selection": "3"
+        }
+      },
+      "expected": {
+        "round_number": null,
+        "confidence": "NONE",
+        "source_field": "none",
+        "round_candidates": [],
+        "is_unassigned": true
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "round cycle": "3"
+        }
+      },
+      "expected": {
+        "round_number": null,
+        "confidence": "NONE",
+        "source_field": "none",
+        "round_candidates": [],
+        "is_unassigned": true
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "pcr cycle": "25",
+          "selex cycle": "3"
+        }
+      },
+      "expected": {
+        "round_number": 3,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          3
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "selex cycle": "3",
+          "pcr cycle": "25"
+        }
+      },
+      "expected": {
+        "round_number": 3,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          3
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "round": "2",
+          "selex cycle": "3"
+        }
+      },
+      "expected": {
+        "round_number": 2,
+        "confidence": "MEDIUM",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          2,
+          3
+        ],
+        "is_unassigned": true
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "selex cycle": "3",
+          "round": "2"
+        }
+      },
+      "expected": {
+        "round_number": 3,
+        "confidence": "MEDIUM",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          3,
+          2
+        ],
+        "is_unassigned": true
+      }
+    },
+    {
+      "input": {
+        "sample_attributes": {
+          "round": "3",
+          "selex cycle": "Cycle3"
+        }
+      },
+      "expected": {
+        "round_number": 3,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          3
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_title": "RV04"
+      },
+      "expected": {
+        "round_number": null,
+        "confidence": "NONE",
+        "source_field": "none",
+        "round_candidates": [],
+        "is_unassigned": true
+      }
+    },
+    {
+      "input": {
+        "library_name": "RV04_s"
+      },
+      "expected": {
+        "round_number": null,
+        "confidence": "NONE",
+        "source_field": "none",
+        "round_candidates": [],
+        "is_unassigned": true
+      }
+    },
+    {
+      "input": {
+        "sample_title": "RV04",
+        "sample_attributes": {
+          "construct": "ZFC1 of Sall4",
+          "selex cycle": "1"
+        },
+        "library_name": "RV04_s"
+      },
+      "expected": {
+        "round_number": 1,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          1
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_title": "Round 5",
+        "sample_attributes": {
+          "selex cycle": "3"
+        }
+      },
+      "expected": {
+        "round_number": 3,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          3
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_title": "Round 3",
+        "sample_attributes": {
+          "round": "3"
+        }
+      },
+      "expected": {
+        "round_number": 3,
+        "confidence": "HIGH",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          3
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_title": "RV04",
+        "sample_attributes": {
+          "pcr cycle": "1"
+        }
+      },
+      "expected": {
+        "round_number": 1,
+        "confidence": "MEDIUM",
+        "source_field": "sample_attributes",
+        "round_candidates": [
+          1
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_title": "Round 3",
+        "sample_attributes": {
+          "pcr cycle": "25"
+        }
+      },
+      "expected": {
+        "round_number": 3,
+        "confidence": "HIGH",
+        "source_field": "sample_title",
+        "round_candidates": [
+          3
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_title": "Round 3",
+        "sample_attributes": {
+          "pcr cycle": "3"
+        }
+      },
+      "expected": {
+        "round_number": 3,
+        "confidence": "HIGH",
+        "source_field": "sample_title",
+        "round_candidates": [
+          3
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "library_name": "RAPT26-2R",
+        "sample_attributes": {
+          "pcr cycle": "25"
+        }
+      },
+      "expected": {
+        "round_number": 2,
+        "confidence": "MEDIUM",
+        "source_field": "library_name",
+        "round_candidates": [
+          2
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "library_name": "SELEX_round26_N40"
+      },
+      "expected": {
+        "round_number": 26,
+        "confidence": "MEDIUM",
+        "source_field": "library_name",
+        "round_candidates": [
+          26
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_title": "DNAFOXR00"
+      },
+      "expected": {
+        "round_number": 0,
+        "confidence": "HIGH",
+        "source_field": "sample_title",
+        "round_candidates": [
+          0
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_title": "Selex_7_cyc"
+      },
+      "expected": {
+        "round_number": 7,
+        "confidence": "HIGH",
+        "source_field": "sample_title",
+        "round_candidates": [
+          7
+        ],
+        "is_unassigned": false
+      }
+    },
+    {
+      "input": {
+        "sample_title": "TFR1"
+      },
+      "expected": {
+        "round_number": null,
+        "confidence": "NONE",
+        "source_field": "none",
+        "round_candidates": [],
+        "is_unassigned": true
+      }
+    },
+    {
+      "input": {
+        "sample_title": "(R3)"
+      },
+      "expected": {
+        "round_number": null,
+        "confidence": "NONE",
+        "source_field": "none",
+        "round_candidates": [],
+        "is_unassigned": true
+      }
+    },
+    {
+      "input": {
+        "sample_title": "ROUND 3"
+      },
+      "expected": {
+        "round_number": null,
+        "confidence": "NONE",
+        "source_field": "none",
+        "round_candidates": [],
+        "is_unassigned": true
+      }
+    },
+    {
+      "input": {
+        "sample_title": "Round 3 / Cycle 7"
+      },
+      "expected": {
+        "round_number": 3,
+        "confidence": "MEDIUM",
+        "source_field": "sample_title",
+        "round_candidates": [
+          3,
+          7
+        ],
+        "is_unassigned": true
+      }
+    }
+  ]
+}

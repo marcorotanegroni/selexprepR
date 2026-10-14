@@ -38,7 +38,7 @@ jobs:
           required <- c(
             "arrow", "BiocCheck", "BiocStyle", "Biostrings", "digest",
             "httr2", "jsonlite", "knitr", "Matrix", "rmarkdown",
-            "S4Vectors", "SummarizedExperiment", "testthat", "withr"
+            "S4Vectors", "SummarizedExperiment", "testthat", "withr", "xml2"
           )
           missing <- required
           for (attempt in seq_len(3L)) {

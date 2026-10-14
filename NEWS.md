@@ -1,3 +1,21 @@
+# selexprepR 0.99.5
+
+* Align library inference with Python selexprep v0.4.6: retain shared library
+  constants across rounds using per-round offsets, preserve the insert boundary,
+  and avoid ambiguous repeated-core anchors.
+* Warn about extraction pools retaining fewer than half their reads or half
+  the best pool's yield, retaining diagnostics in `low_yield_rounds`. File
+  workflows also retain `input_yields` and `low_yield_inputs` per FASTQ, so
+  aggregation cannot mask a poorly matching input.
+* Normalize lowercase RNA consistently during detection and primer matching.
+* Read ENA BioSample attributes for round inference; handle conflicting and
+  weak PCR-cycle evidence, and stop interpreting ArrayExpress RV sample labels
+  as selection rounds.
+* Retry ENA filereport service-error bodies, retain run-level library strategy
+  and sample evidence, and warn when a round pools distinct BioSamples.
+* Pin the 240-record catalog and provenance to Python v0.4.6, including the
+  corrected PFOA target class. Add offline Python/R regression references.
+
 # selexprepR 0.99.4
 
 * Refuse inferred libraries with a zero-length random region instead of

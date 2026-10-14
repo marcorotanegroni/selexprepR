@@ -29,13 +29,13 @@ test_that("package dataset and accessor expose the reviewed snapshot", {
     expect_identical(dataset, selexprep_catalog())
     expect_identical(
         provenance$snapshot_version,
-        "v0.3.2-dual-extraction-adjudicated-en-2026-09-04"
+        "selexprep-v0.4.6"
     )
     expect_identical(
         provenance$source_sha256,
         paste0(
-            "e67b7b77f9d60b6ae6a686099c2a524ae59f50fbaa446aece7ea607f",
-            "dc007fef"
+            "121b599786a718d877bd950660a3a4e0ec178db2f1b54636815d575185",
+            "c3e0fe"
         )
     )
 })

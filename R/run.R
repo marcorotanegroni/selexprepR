@@ -10,6 +10,13 @@
 #' full inserts cannot be counted without read merging. Their separate trimmed
 #' sides remain available in `metadata(result)$extraction`.
 #'
+#' Library status rates read support, not a verified constant/random boundary.
+#' Check the published library design when diverse early rounds are absent.
+#' Extraction warns about low read retention; diagnostics remain in
+#' `metadata(result)$extraction$low_yield_rounds`. With FASTQ input bundles,
+#' per-file counts and warnings also remain in `input_yields` and
+#' `low_yield_inputs`, so pooling files cannot hide a poorly matching input.
+#'
 #' @param sequences_by_round A named list of R1 pools, as accepted by
 #'   `selexprep_detect()`, or a `selexprep_read_inputs` object.
 #' @param read_source Input read layout.
@@ -61,8 +68,16 @@ run_selexprep <- function(sequences_by_round, read_source = c("R1", "R2", "R1_AN
         primer_3p = primer_3p,
         extraction_mode = extraction_mode
     )
-    extracted <- system.time(extraction <- selexprep_extract(sequences_by_round = sequences_by_round,
-        library_report = report, paired_mate_streams = paired_mate_streams))
+    file_inputs <- !is.null(input_bundle) && !is.null(input_bundle$files) &&
+        nrow(input_bundle$files) > 0L
+    extracted <- system.time({
+        extraction <- .extract_selexprep(sequences_by_round = sequences_by_round,
+            library_report = report, paired_mate_streams = paired_mate_streams,
+            keep_masks = file_inputs)
+        if (file_inputs) {
+            extraction <- .add_input_yields(extraction, input_bundle$files)
+        }
+    })
     counted <- system.time(count_tables <- if (identical(report$extraction_mode,
         "PAIRED_END_SPLIT_PRIMERS")) {
         round_names <- names(extraction$sequences_by_round)

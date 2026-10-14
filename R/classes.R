@@ -17,7 +17,11 @@
 #' * `selexprep_extraction` stores `extraction_mode`,
 #'   `full_insert_recovered`, primer-stripped `sequences_by_round`, named
 #'   `input_reads` and `output_reads` counts, and the pre-trim
-#'   forward/reverse/ambiguous `strand_distribution` for each round.
+#'   forward/reverse/ambiguous `strand_distribution` for each round, plus
+#'   named `low_yield_rounds` diagnostics for pools with poor read retention.
+#'   Workflows receiving FASTQ input bundles also retain an `input_yields`
+#'   `DataFrame` and named `low_yield_inputs` diagnostics per R1 FASTQ (joint
+#'   pair retention for paired split extraction).
 #' * `selexprep_qc` stores a `per_round` metrics `DataFrame`, a pairwise
 #'   `round_similarity` `DataFrame`, a `flags` `DataFrame` whose `evidence`
 #'   column contains structured lists, and the applied `settings`.
@@ -28,9 +32,11 @@
 #'   v2 schemas.
 #' * `selexprep_inspection` stores the requested `accession`, BioProject ID,
 #'   study title, library strategy/source, and a run-level `runs` `DataFrame`
-#'   containing accessions, titles, sizes, FASTQ URLs, and checksums.
+#'   containing accessions, titles, sizes, FASTQ URLs, checksums, per-run
+#'   `library_strategy`, and a `sample_attributes` list-column from ENA XML.
 #' * `selexprep_fetch_result` stores the resolved run-level download `plan`,
-#'   `downloaded_files`, and the `dry_run` status.
+#'   `downloaded_files`, the `dry_run` status, and `rounds_with_several_samples`
+#'   mapping assigned rounds to runs drawn from distinct BioSamples.
 #' * `selexprep_read_inputs` stores round-aware R1 pools, optional R2 pools,
 #'   the inferred `read_source`, and a file-level provenance `DataFrame`.
 #' * `selexprep_demultiplex` extends `selexprep_read_inputs` with unassigned

@@ -35,8 +35,8 @@ Curation statuses are \code{adjudicated}, \code{concordant}, \code{not_stated}, 
 }
 \source{
 The snapshot was migrated without modification from the original
-selexprep catalog at commit
-\code{0db8e3313a775e30c7bc961aa61d121e75c74467}. See the object metadata and
+selexprep v0.4.6 catalog at commit
+\verb{63f33b44bb381c2c6b6ed131f3b98e8d6ff9d5f5}. See the object metadata and
 \code{inst/CATALOG_PROVENANCE.md} for immutable source links and terms.
 }
 \usage{

@@ -26,6 +26,14 @@ description. A run remains unsafe when no round is found or when one field
 contains conflicting candidates. The function records evidence rather than
 using enrichment signals to repair metadata.
 }
+\details{
+Strong round attributes (including \verb{Characteristics[selex cycle]}) take
+precedence over text. Conflicting strong attributes remain ambiguous;
+weak \verb{pcr cycle} evidence never overrides an explicit text round.
+ArrayExpress \code{RVxx} labels are sample numbers rather than round numbers.
+Repeated conflicting indicators are all retained, including adjacent
+\verb{Round 1 Round 2} labels.
+}
 \examples{
 runs <- data.frame(
     run_accession = c('SRR1', 'SRR2'),

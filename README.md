@@ -52,9 +52,17 @@ It works offline and carries snapshot provenance in
 `inspect_selexprep_accession()` before calling `fetch_selexprep_reads()`; the
 latter defaults to a checksum-aware dry-run plan.
 
+The R implementation is aligned to Python `selexprep v0.4.6` (commit
+`63f33b44bb381c2c6b6ed131f3b98e8d6ff9d5f5`), with independent R versioning.
+Shared constants are checked across rounds; extraction warns when fewer than
+half the reads survive, with separate FASTQ diagnostics for file workflows. `HIGH` and `MEDIUM` describe read support rather than a
+verified constant/random boundary. Consult the study's library design when a
+diverse early round is missing. See `inst/UPSTREAM_ALIGNMENT.md` for scope,
+intentional R interface differences, and reproducible regression references.
+
 ## Development status
 
-This is the `0.99.1` submission candidate for Bioconductor. Development of the
+This is the `0.99.5` submission candidate for Bioconductor. Development of the
 R package is hosted at <https://github.com/marcorotanegroni/selexprepR>; the
 original Python implementation remains available at
 <https://github.com/marcorotanegroni/selexprep>.

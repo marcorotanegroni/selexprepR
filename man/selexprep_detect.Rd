@@ -37,6 +37,16 @@ inferred biology, input layout, and required downstream action. When primer
 evidence is insufficient, it returns an explicit safe-failure report rather
 than guessing.
 }
+\details{
+The call retains the sequence shared by anchored rounds: run-specific outer
+tags may be removed, while the inner 12 bases next to the insert remain
+fixed. Position evidence uses round-specific offsets. Insert-length and
+orientation estimates use the complete earliest-round flanks.
+
+\code{HIGH} and \code{MEDIUM} rate read support, not a verified constant/random
+boundary. When diverse early rounds are absent, consult the published
+library design and use reviewed primer overrides if needed.
+}
 \examples{
 p5 <- 'GGTAATACGACTCACTATAGGG'
 p3 <- 'CCATGCATGCATGCATGCAT'

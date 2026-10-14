@@ -32,7 +32,9 @@ or \code{read_library_report()}.}
 \value{
 A \code{selexprep_extraction}. Full and single-primer modes store one
 \code{Biostrings::BStringSet} per round; paired split mode stores an \code{r1} and
-\code{r2} \code{BStringSet} for every round.
+\code{r2} \code{BStringSet} for every round. \code{low_yield_rounds} is a named character
+vector describing nonempty rounds retaining less than half their reads or
+less than half the best round's yield; these rounds also emit a warning.
 }
 \description{
 Uses a \code{selexprep_library_report} to remove the inferred constant regions.

@@ -234,7 +234,11 @@ read_selexprep_inputs <- function(x, round = NULL, mate = NULL, max_reads_per_fi
 #'
 #' Convenience bridge combining [read_selexprep_inputs()] and
 #' [run_selexprep()]. File-level provenance is attached to
-#' `metadata(result)$input_files`.
+#' `metadata(result)$input_files`. Extraction metadata also retains
+#' `input_yields` with loaded/retained R1 read counts per FASTQ and
+#' `low_yield_inputs` diagnostics. Split-primer paired extraction counts
+#' jointly retained pairs once per R1 input; unused R2 files are excluded from
+#' single-read yield diagnostics. Empty files have an undefined yield.
 #'
 #' @inheritParams read_selexprep_inputs
 #' @param ... Named arguments forwarded to [run_selexprep()]. The input
@@ -262,8 +266,7 @@ run_selexprep_files <- function(x, round = NULL, mate = NULL, max_reads_per_file
     if (length(intersect(names(extras), reserved))) {
         stop("Sequence layout arguments are derived from the FASTQ inputs.", call. = FALSE)
     }
-    arguments <- c(list(sequences_by_round = inputs$sequences_by_round, read_source = inputs$read_source,
-        paired_mate_streams = inputs$paired_mate_streams), extras)
+    arguments <- c(list(sequences_by_round = inputs), extras)
     experiment <- do.call(run_selexprep, arguments)
     metadata <- S4Vectors::metadata(experiment)
     metadata$input_files <- inputs$files
@@ -275,4 +278,51 @@ run_selexprep_files <- function(x, round = NULL, mate = NULL, max_reads_per_file
     metadata$manifest <- .new_selexprep_manifest(manifest_fields)
     S4Vectors::metadata(experiment) <- metadata
     experiment
+}
+
+
+.add_input_yields <- function(extraction, files) {
+    kept_by_round <- attr(extraction, "kept_by_round", exact = TRUE)
+    attr(extraction, "kept_by_round") <- NULL
+    files <- files[files$mate == "R1", , drop = FALSE]
+    input_reads <- as.integer(files$reads_loaded)
+    output_reads <- integer(nrow(files))
+    round_names <- sprintf("round_%02d", files$round_number)
+    for (round_name in unique(round_names)) {
+        indices <- which(round_names == round_name)
+        keep <- kept_by_round[[round_name]]
+        if (is.null(keep) || sum(input_reads[indices]) != length(keep)) {
+            stop("FASTQ provenance does not match the extracted read pools.",
+                call. = FALSE)
+        }
+        offset <- 0L
+        for (index in indices) {
+            read_indices <- offset + seq_len(input_reads[[index]])
+            output_reads[[index]] <- sum(keep[read_indices])
+            offset <- offset + input_reads[[index]]
+        }
+    }
+    fraction_kept <- rep(NA_real_, length(input_reads))
+    nonempty <- input_reads > 0L
+    fraction_kept[nonempty] <- output_reads[nonempty] / input_reads[nonempty]
+    low_yield <- .low_yield_rounds(
+        stats::setNames(input_reads, files$path),
+        stats::setNames(output_reads, files$path), label = "input"
+    )
+    extraction$input_yields <- S4Vectors::DataFrame(
+        files[, c("path", "round_number", "mate", "run_accession")],
+        input_reads = input_reads, output_reads = output_reads,
+        fraction_kept = fraction_kept
+    )
+    extraction$low_yield_inputs <- low_yield
+    if (length(low_yield)) {
+        warning(paste0(
+            "Extraction: ", length(low_yield),
+            " input FASTQ(s) kept under half of their reads or under half ",
+            "the best input's yield; the primers may not fit their reads ",
+            "(run-specific outer sequence or a different construct): ",
+            paste(low_yield, collapse = "; ")
+        ), call. = FALSE)
+    }
+    extraction
 }

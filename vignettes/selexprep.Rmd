@@ -1,6 +1,6 @@
 ---
 title: "Preprocessing an HT-SELEX study"
-author: "Marco Rotanegroni"
+author: "Marco Rota Negroni"
 date: "`r Sys.Date()`"
 output: BiocStyle::html_document
 vignette: >
@@ -75,6 +75,23 @@ Matrix::colSums(counts)
 head(SummarizedExperiment::rowData(experiment))
 ```
 
+Constant-region inference starts from the earliest supplied round, then keeps
+the sequence shared across rounds. Run-specific outer tags may be removed;
+the inner 12 bases next to the insert stay fixed, and round-specific offsets
+are used to measure positional support. Insert-length estimates still use the
+earliest round's complete flanks. Repeated cores without reliable anchors do
+not move the boundary.
+
+`HIGH` and `MEDIUM` describe read support, not a verified constant/random
+boundary. When diverse early rounds are absent, an enriched insert may look
+constant; check the published library design and supply reviewed primers when
+needed. Extraction warns about rounds retaining less than half their reads or
+half the best round's yield. Inspect
+`S4Vectors::metadata(experiment)$extraction$low_yield_rounds` for the details.
+File workflows additionally retain `input_yields` and `low_yield_inputs` for
+each R1 FASTQ, with joint pair retention in split-primer mode. This reveals
+poorly matching files even when the pooled round has a healthy yield.
+
 The library report records the inferred constant regions and the decision about
 whether full inserts were recovered. The QC object summarizes every round and
 lists explicit flags instead of silently discarding a concern.
@@ -112,14 +129,22 @@ experiment <- run_selexprep(inputs)
 ```
 
 The catalog is distributed as a package dataset and can be queried without a
-network connection. Its metadata records the exact snapshot and immutable
-source locations.
+network connection. The 240-record snapshot comes from Python v0.4.6. Its metadata records the
+release commit, CSV SHA-256, and immutable source locations.
 
 ```{r public-catalog}
 data("selexprep_public_catalog", package = "selexprepR")
 selexprep_catalog("FGF-9")
 S4Vectors::metadata(selexprep_public_catalog)$snapshot_version
 ```
+
+ENA inspection also retrieves custom BioSample attributes, such as `selex
+cycle`, for round inference. Strong structured attributes take precedence;
+conflicts remain unsafe, and ambiguous `pcr cycle` keys do not override explicit
+rounds in titles. ArrayExpress labels such as `RV04` are sample numbers. A
+sample-XML failure warns and falls back to textual metadata. Plans warn when
+the same round includes distinct BioSamples: review whether these are lanes,
+replicates, or parallel selections before merging them.
 
 ENA inspection and download are separate, so the planned files and checksums
 can be reviewed before any data transfer.

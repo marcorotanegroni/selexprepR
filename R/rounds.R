@@ -1,10 +1,39 @@
-.round_patterns <- list(round_word_digit = "(?i)\\bround[[:space:]_\\-]*(\\d+)\\b",
-    cycle_word_digit = "(?i)\\bcycle[[:space:]_\\-]*(\\d+)\\b", iteration_digit = "(?i)\\biteration[[:space:]_\\-]*(\\d+)\\b",
-    pool_digit = "(?i)\\bpool[[:space:]_\\-]*(\\d+)\\b", r_digit_boundary = "(?i)(?<![[:alnum:]])r(\\d+)(?![[:alnum:]])",
-    c_digit_boundary = "(?i)(?<![[:alnum:]])c(\\d+)(?![[:alnum:]])", digit_r_suffix = "(?i)(?<![[:alnum:]])(\\d+)r(?![[:alnum:]])",
-    rv_digit = "(?i)(?<![[:alnum:]])rv(\\d+)(?![[:alnum:]])", glued_word_r_digit = "[A-Z][A-Za-z]{2,}R(\\d+)(?![[:alnum:]])",
-    digit_cyc_suffix = "(?i)(?<![[:alnum:]])(\\d+)[[:space:]_\\-]*cyc(?:les?)?(?![[:alnum:]])")
-.round_attribute_key <- "(?i)^(?:selex_)?(?:round|cycle|iteration|r|selection_round|selection_cycle)(?:_num(?:ber)?)?$"
+# Match the separators used by Python v0.4.6. Lookarounds retain separators
+# between repeated indicators so R continues to expose every conflicting round.
+# RV01/RV02 are ArrayExpress sample labels, never round indicators.
+.round_patterns <- list(
+    round_word_digit = "(?<![^[:space:]_\\-./])[Rr]ound[[:space:]_\\-]*(\\d+)(?=[[:space:]_\\-./]|$)",
+    cycle_word_digit = "(?<![^[:space:]_\\-./])[Cc]ycle[[:space:]_\\-]*(\\d+)(?=[[:space:]_\\-./]|$)",
+    iteration_digit = "(?<![^[:space:]_\\-./])[Ii]teration[[:space:]_\\-]*(\\d+)(?=[[:space:]_\\-./]|$)",
+    pool_digit = "(?<![^[:space:]_\\-./])[Pp]ool[[:space:]_\\-]*(\\d+)(?=[[:space:]_\\-./]|$)",
+    r_digit_boundary = "(?<![^[:space:]_\\-./])[Rr](\\d+)(?=[[:space:]_\\-./]|$)",
+    c_digit_boundary = "(?<![^[:space:]_\\-./])[Cc](\\d+)(?=[[:space:]_\\-./]|$)",
+    digit_r_suffix = "(?<![^[:space:]_\\-./])(\\d+)[Rr](?=[[:space:]_\\-./]|$)",
+    glued_word_r_digit = "[A-Z][A-Za-z]{2,}R(\\d+)(?=[[:space:]_\\-./]|$)",
+    digit_cyc_suffix = "(?i)(?<![^[:space:]_\\-./])(\\d+)[[:space:]_\\-]*cyc(?:les?)?(?=[[:space:]_\\-./]|$)"
+)
+.round_key_confidence <- function(key) {
+    key <- tolower(trimws(key))
+    key <- sub("^characteristics?[[:space:]]*\\[(.*)\\]$", "\\1", key, perl = TRUE)
+    key <- gsub("[[:space:]\\-]+", "_", trimws(key), perl = TRUE)
+    words <- strsplit(key, "_", fixed = TRUE)[[1L]]
+    words <- words[nzchar(words)]
+    round_words <- c("round", "cycle", "iteration", "r")
+    vocabulary <- c("selex", "selection", "enrichment", "of", "number", "num", "no", "pcr")
+    others <- words[!words %in% round_words]
+    if (sum(words %in% round_words) != 1L || !all(others %in% vocabulary)) {
+        return(NA_character_)
+    }
+    if ("pcr" %in% others) "MEDIUM" else "HIGH"
+}
+.round_attribute_value <- function(value) {
+    pattern <- "(?i)^(?:(?:round|cycle|r|c)[[:space:]_\\-]*)?(\\d+)$"
+    value <- trimws(value)
+    if (is.na(value) || !grepl(pattern, value, perl = TRUE)) {
+        return(NA_integer_)
+    }
+    suppressWarnings(as.integer(sub(pattern, "\\1", value, perl = TRUE)))
+}
 .round_matches <- function(text) {
     if (is.null(text) || !length(text) || is.na(text) || !nzchar(trimws(text))) {
         return(list(patterns = character(), values = integer()))
@@ -46,26 +75,8 @@
     if (length(found) >= 2L)
         found[[2L]] else NA_character_
 }
-.single_round_assignment <- function(run_accession, sample_title = "", library_name = "",
-    experiment_title = "", design_description = "", sample_attributes = NULL, overrides = numeric()) {
-    override <- if (run_accession %in% names(overrides))
-        overrides[[run_accession]] else NA_integer_
-    if (!is.null(override) && !is.na(override)) {
-        return(list(round_number = as.integer(override), confidence = "HIGH", source_field = "seed_override",
-            matched_pattern = "manual", candidates = as.integer(override), parser_notes = sprintf("overridden by supplied mapping: round=%d",
-                as.integer(override)), target_hint = .target_hint(sample_title)))
-    }
-    attributes <- .as_round_attributes(sample_attributes)
-    for (key in names(attributes)) {
-        value <- trimws(attributes[[key]])
-        if (grepl(.round_attribute_key, trimws(key), perl = TRUE) && grepl("^\\d+$",
-            value)) {
-            round <- as.integer(value)
-            return(list(round_number = round, confidence = "HIGH", source_field = "sample_attributes",
-                matched_pattern = "structured_attr", candidates = round, parser_notes = sprintf("structured attribute key='%s' value='%s'",
-                  key, value), target_hint = .target_hint(sample_title)))
-        }
-    }
+.text_round_assignment <- function(sample_title, library_name, experiment_title,
+    design_description) {
     levels <- list(list(name = "sample_title", text = sample_title, confidence = "HIGH"),
         list(name = "library_name", text = library_name, confidence = "MEDIUM"),
         list(name = "experiment_title", text = experiment_title, confidence = "MEDIUM"),
@@ -91,6 +102,72 @@
             source_field = level$name, matched_pattern = patterns[[1L]], candidates = as.integer(candidates),
             parser_notes = notes, target_hint = .target_hint(sample_title)))
     }
+    NULL
+}
+.single_round_assignment <- function(run_accession, sample_title = "", library_name = "",
+    experiment_title = "", design_description = "", sample_attributes = NULL, overrides = numeric()) {
+    override <- if (run_accession %in% names(overrides))
+        overrides[[run_accession]] else NA_integer_
+    if (!is.null(override) && !is.na(override)) {
+        return(list(round_number = as.integer(override), confidence = "HIGH", source_field = "seed_override",
+            matched_pattern = "manual", candidates = as.integer(override), parser_notes = sprintf("overridden by supplied mapping: round=%d",
+                as.integer(override)), target_hint = .target_hint(sample_title)))
+    }
+    attributes <- .as_round_attributes(sample_attributes)
+    strong <- weak <- integer()
+    for (index in seq_along(attributes)) {
+        key <- names(attributes)[[index]]
+        confidence <- .round_key_confidence(key)
+        round <- .round_attribute_value(attributes[[index]])
+        if (is.na(confidence) || is.na(round)) next
+        if (confidence == "HIGH") {
+            strong <- c(strong, stats::setNames(round, key))
+        } else {
+            weak <- c(weak, stats::setNames(round, key))
+        }
+    }
+    text_record <- .text_round_assignment(sample_title, library_name,
+        experiment_title, design_description)
+    strong_rounds <- unique(unname(strong))
+    weak_rounds <- unique(unname(weak))
+    listed <- paste(sprintf("%s='%d'", names(c(strong, weak)), c(strong, weak)),
+        collapse = "; ")
+    if (length(strong_rounds) > 1L) {
+        return(list(round_number = strong_rounds[[1L]], confidence = "MEDIUM",
+            source_field = "sample_attributes", matched_pattern = "structured_attr",
+            candidates = strong_rounds, parser_notes = sprintf("conflicting round attributes [%s]: %s",
+                paste(strong_rounds, collapse = ", "), listed), target_hint = .target_hint(sample_title)))
+    }
+    if (length(strong_rounds) || (length(weak_rounds) && is.null(text_record))) {
+        rounds <- if (length(strong_rounds)) strong_rounds else weak_rounds
+        notes <- paste("structured attribute", listed)
+        if (!length(strong_rounds)) {
+            notes <- paste0(notes, "; the key can also mean amplification cycles, read as the round")
+        } else if (length(weak_rounds) && !identical(weak_rounds, rounds)) {
+            notes <- paste0(notes, "; ambiguous attribute reads as round [",
+                paste(weak_rounds, collapse = ", "), "], not used")
+        }
+        fields <- list(sample_title = sample_title, library_name = library_name,
+            experiment_title = experiment_title, design_description = design_description)
+        for (name in names(fields)) {
+            other <- unique(.round_matches(fields[[name]])$values)
+            if (length(other) && !identical(other, rounds[1L])) {
+                notes <- paste0(notes, "; ", name, " reads as round [",
+                    paste(other, collapse = ", "), "] ('", substr(fields[[name]], 1L, 60L),
+                    "'), the attribute is kept")
+            }
+        }
+        return(list(round_number = rounds[[1L]], confidence = if (length(strong_rounds)) "HIGH" else "MEDIUM",
+            source_field = "sample_attributes", matched_pattern = "structured_attr",
+            candidates = rounds, parser_notes = notes, target_hint = .target_hint(sample_title)))
+    }
+    if (!is.null(text_record)) {
+        if (length(weak_rounds) && !identical(weak_rounds, text_record$round_number)) {
+            text_record$parser_notes <- paste0(text_record$parser_notes,
+                "; ambiguous attribute ", listed, " not used over the text field")
+        }
+        return(text_record)
+    }
     list(round_number = NA_integer_, confidence = "NONE", source_field = "none",
         matched_pattern = "none", candidates = integer(), parser_notes = "no round indicator found in supplied metadata fields",
         target_hint = .target_hint(sample_title))
@@ -108,6 +185,13 @@
 #' description. A run remains unsafe when no round is found or when one field
 #' contains conflicting candidates. The function records evidence rather than
 #' using enrichment signals to repair metadata.
+#'
+#' Strong round attributes (including `Characteristics[selex cycle]`) take
+#' precedence over text. Conflicting strong attributes remain ambiguous;
+#' weak `pcr cycle` evidence never overrides an explicit text round.
+#' ArrayExpress `RVxx` labels are sample numbers rather than round numbers.
+#' Repeated conflicting indicators are all retained, including adjacent
+#' `Round 1 Round 2` labels.
 #'
 #' @param runs A data frame or `S4Vectors::DataFrame` containing
 #'   `run_accession` and optional metadata columns `sample_title`,

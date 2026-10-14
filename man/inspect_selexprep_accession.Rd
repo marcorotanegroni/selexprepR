@@ -19,6 +19,10 @@ A \code{selexprep_inspection} list with a run-level
 Queries ENA's read-run filereport endpoint without downloading sequence data.
 The returned \code{selexprep_inspection} retains verbatim library strategy/source
 metadata and one row per run with its FASTQ URLs, sizes, and MD5 checksums.
+Custom BioSample attributes are fetched from ENA sample XML and retained
+in a \code{sample_attributes} list-column; each run keeps its \code{library_strategy}.
+If sample XML is unavailable, a warning accompanies fallback to text-field
+round inference. Filereport service-error bodies are retried before parsing.
 }
 \examples{
 \donttest{

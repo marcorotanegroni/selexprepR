@@ -3,7 +3,8 @@
 deposits from ENA, Figshare, and Zenodo, with eight curated experimental fields
 and a reconciliation status for each field.
 
-The snapshot was migrated byte-for-byte from the original Python project. Run
+The snapshot was migrated byte-for-byte from Python selexprep v0.4.6
+(commit 63f33b44bb381c2c6b6ed131f3b98e8d6ff9d5f5). Run
 `inst/scripts/make-selexprep-public-catalog.R` from the package source root to
 verify its SHA-256, schema, identifiers, and statuses before rebuilding the
 `.rda` dataset.

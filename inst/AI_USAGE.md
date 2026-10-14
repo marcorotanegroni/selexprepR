@@ -13,5 +13,11 @@ implementation, focused R unit tests, and differential extraction cases against
 cutadapt are used to detect behavioral drift. No Python runtime or generated
 foreign-language source code is bundled in the R package.
 
+The 0.99.5 alignment used Codex and parallel audit agents to compare the
+exact Python v0.4.1 and v0.4.6 source and data, prepare regression fixtures,
+and review the R changes. The primary agent recovered and verified temporary
+patches after a usage-limit interruption, ran the full R source-mode suite
+and recorded supported-environment CI requirements in ALIGNMENT_VALIDATION.md.
+
 This disclosure should also be included in the BiocContributions submission
 issue, together with any additional AI assistance used after this snapshot.

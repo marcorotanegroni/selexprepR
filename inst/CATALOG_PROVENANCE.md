@@ -3,15 +3,20 @@
 `selexprep_public_catalog` is a frozen flat view of 240 public HT-SELEX
 deposits. It was migrated without modification from
 `src/selexprep/catalog/data/curated_metadata.csv` in the original Python
-repository at commit `0db8e3313a775e30c7bc961aa61d121e75c74467`.
+repository at commit `63f33b44bb381c2c6b6ed131f3b98e8d6ff9d5f5`.
 
-- Snapshot version: `v0.3.2-dual-extraction-adjudicated-en-2026-09-04`
-- Snapshot date: 2026-09-04
+- Snapshot version: `selexprep-v0.4.6`
+- Snapshot date: 2026-10-02
 - CSV SHA-256:
-  `e67b7b77f9d60b6ae6a686099c2a524ae59f50fbaa446aece7ea607fdc007fef`
-- Immutable CSV: <https://github.com/marcorotanegroni/selexprep/blob/0db8e3313a775e30c7bc961aa61d121e75c74467/src/selexprep/catalog/data/curated_metadata.csv>
-- Canonical provenance JSON: <https://github.com/marcorotanegroni/selexprep/blob/0db8e3313a775e30c7bc961aa61d121e75c74467/src/selexprep/catalog/data/curated_metadata.json>
-- Curation materials: <https://github.com/marcorotanegroni/selexprep/tree/0db8e3313a775e30c7bc961aa61d121e75c74467/benchmarks/dual_extraction>
+  `121b599786a718d877bd950660a3a4e0ec178db2f1b54636815d575185c3e0fe`
+- Immutable CSV: <https://github.com/marcorotanegroni/selexprep/blob/63f33b44bb381c2c6b6ed131f3b98e8d6ff9d5f5/src/selexprep/catalog/data/curated_metadata.csv>
+- Canonical provenance JSON: <https://github.com/marcorotanegroni/selexprep/blob/63f33b44bb381c2c6b6ed131f3b98e8d6ff9d5f5/src/selexprep/catalog/data/curated_metadata.json>
+- Curation materials: <https://github.com/marcorotanegroni/selexprep/tree/63f33b44bb381c2c6b6ed131f3b98e8d6ff9d5f5/benchmarks/dual_extraction>
+
+Relative to the v0.4.1 flat catalog, v0.4.6 changes only PRJEB114397
+(PFOA)'s target class to `small molecule`; the 240 identifiers and curation
+statuses remain unchanged. Its canonical JSON also updates evidence and
+concordance notes for PRJEB114397 and PRJNA1481083.
 
 The eight experimental fields were extracted independently by Claude and
 Codex/GPT, then reconciled. The paired `_curation` columns preserve whether a

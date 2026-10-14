@@ -34,13 +34,18 @@ curated round numbers.}
 }
 \value{
 A \code{selexprep_fetch_result} list containing the run-level \verb{$plan},
-\verb{$downloaded_files}, and \verb{$dry_run}.
+\verb{$downloaded_files}, \verb{$dry_run}, and \verb{$rounds_with_several_samples}, a
+mapping of assigned rounds to runs from distinct BioSamples. The mapping
+is also stored in \code{S4Vectors::metadata(result$plan)}.
 }
 \description{
 Creates a deterministic, checksum-aware download plan from an existing
 inspection or an accession. By default no bytes are transferred; set
 \code{dry_run = FALSE} to download to \code{outdir}. Each completed file is checked
 against ENA's MD5 value when one is supplied.
+Assigned rounds spanning distinct BioSamples emit a warning: counting
+merges their runs into one round pool, so review replicates or parallel
+selections before proceeding. The assignments are retained.
 }
 \examples{
 \donttest{

@@ -36,7 +36,11 @@ A \code{SummarizedExperiment} as returned by \code{\link[=run_selexprep]{run_sel
 \description{
 Convenience bridge combining \code{\link[=read_selexprep_inputs]{read_selexprep_inputs()}} and
 \code{\link[=run_selexprep]{run_selexprep()}}. File-level provenance is attached to
-\code{metadata(result)$input_files}.
+\code{metadata(result)$input_files}. Extraction metadata also retains
+\code{input_yields} with loaded/retained R1 read counts per FASTQ and
+\code{low_yield_inputs} diagnostics. Split-primer paired extraction counts
+jointly retained pairs once per R1 input; unused R2 files are excluded from
+single-read yield diagnostics. Empty files have an undefined yield.
 }
 \examples{
 \donttest{

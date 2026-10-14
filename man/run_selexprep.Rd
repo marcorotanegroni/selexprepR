@@ -54,6 +54,13 @@ assay. The LibraryReport, extraction result and QC report are retained in
 Split-primer paired-end inputs return a valid zero-row experiment because
 full inserts cannot be counted without read merging. Their separate trimmed
 sides remain available in \code{metadata(result)$extraction}.
+
+Library status rates read support, not a verified constant/random boundary.
+Check the published library design when diverse early rounds are absent.
+Extraction warns about low read retention; diagnostics remain in
+\code{metadata(result)$extraction$low_yield_rounds}. With FASTQ input bundles,
+per-file counts and warnings also remain in \code{input_yields} and
+\code{low_yield_inputs}, so pooling files cannot hide a poorly matching input.
 }
 \examples{
 p5 <- 'GGTAATACGACTCACTATAGGG'
