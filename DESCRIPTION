@@ -1,6 +1,6 @@
 Package: selexprepR
 Title: Preprocessing Public HT-SELEX Sequencing Data
-Version: 0.99.5
+Version: 0.99.6
 Authors@R:
     person(given = "Marco", family = "Rota Negroni",
            email = "marco.rotanegroni@gmail.com",

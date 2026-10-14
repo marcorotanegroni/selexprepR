@@ -62,7 +62,7 @@ intentional R interface differences, and reproducible regression references.
 
 ## Development status
 
-This is the `0.99.5` submission candidate for Bioconductor. Development of the
+This is the `0.99.6` submission candidate for Bioconductor. Development of the
 R package is hosted at <https://github.com/marcorotanegroni/selexprepR>; the
 original Python implementation remains available at
 <https://github.com/marcorotanegroni/selexprep>.

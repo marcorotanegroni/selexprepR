@@ -27,8 +27,11 @@
         if (!grepl("ERROR occurred", text, fixed = TRUE)) return(text)
         if (attempt < 4L) .ena_retry_sleep(2 ^ (attempt - 1L))
     }
-    stop(sprintf(paste0("ENA's filereport service answered with an error 4 times for %s; ",
-        "this is the archive's service, not the data: retry later."), accession), call. = FALSE)
+    stop(sprintf(
+        "ENA filereport did not return records after 4 attempts for %s; %s",
+        accession,
+        "this is the archive's service, not the data: retry later."
+    ), call. = FALSE)
 }
 .parse_ena_sample_attributes <- function(body, wanted) {
     document <- xml2::read_xml(body)
@@ -86,9 +89,12 @@
 .enrich_ena_sample_attributes <- function(inspection, timeout_seconds) {
     attributes <- tryCatch(.query_ena_sample_attributes(inspection$runs$sample_accession,
         timeout_seconds), error = function(error) {
-            warning(sprintf(paste0("Sample attributes of %s could not be fetched (%s); ",
-                "rounds are parsed from titles and library names only."), inspection$accession,
-                conditionMessage(error)), call. = FALSE)
+            warning(sprintf(
+                "Sample attributes of %s could not be fetched (%s); %s",
+                inspection$accession,
+                conditionMessage(error),
+                "rounds are parsed from titles and library names only."
+            ), call. = FALSE)
             list()
         })
     inspection$runs$sample_attributes <- I(lapply(inspection$runs$sample_accession,

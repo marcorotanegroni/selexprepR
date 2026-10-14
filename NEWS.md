@@ -1,3 +1,10 @@
+# selexprepR 0.99.6
+
+* Simplify ENA condition messages to address the two new BiocCheck coding
+  practice notes, preserving four-attempt retry and sample-metadata fallback.
+* Keep diagnostic accessions, underlying sample failures and retry advice
+  explicit; remove redundant failure wording from the filereport message.
+
 # selexprepR 0.99.5
 
 * Align library inference with Python selexprep v0.4.6: retain shared library

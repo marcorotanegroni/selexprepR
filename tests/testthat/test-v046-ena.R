@@ -36,14 +36,20 @@ test_that("filereport errors with HTTP 200 are retried before parsing", {
     expect_identical(delays, c(1, 2))
 })
 
-test_that("persistent filereport errors describe the service failure", {
+test_that("persistent filereport failures retain accession and retry diagnostics", {
     count <- 0L
+    delays <- numeric()
     .v046_mock_ena(function(request) {
         count <<- count + 1L
         .v046_ena_response("ERROR occurred. Not all results")
-    })
-    expect_error(.ena_filereport_text("PRJEB51212", 5), "archive's service, not the data")
+    }, function(seconds) delays <<- c(delays, seconds))
+    failure <- tryCatch(.ena_filereport_text("PRJEB51212", 5), error = identity)
+    expect_s3_class(failure, "error")
+    expect_identical(conditionMessage(failure),
+        "ENA filereport did not return records after 4 attempts for PRJEB51212; this is the archive's service, not the data: retry later.")
+    expect_null(conditionCall(failure))
     expect_identical(count, 4L)
+    expect_identical(delays, c(1, 2, 4))
 })
 
 test_that("non-success HTTP filereport responses fail before body parsing", {
@@ -95,8 +101,18 @@ test_that("a sample XML failure warns and retains text-field fallback", {
     inspection <- .parse_ena_filereport(.v046_filereport(), "PRJEB51212")
     inspection$runs$sample_title <- "Round 2"
     .v046_mock_ena(function(request) stop("network unavailable"))
-    expect_warning(enriched <- .enrich_ena_sample_attributes(inspection, 5),
-        "Sample attributes of PRJEB51212 could not be fetched")
+    observed_warning <- NULL
+    enriched <- withCallingHandlers(
+        .enrich_ena_sample_attributes(inspection, 5),
+        warning = function(condition) {
+            observed_warning <<- condition
+            invokeRestart("muffleWarning")
+        }
+    )
+    expect_s3_class(observed_warning, "warning")
+    expect_identical(conditionMessage(observed_warning),
+        "Sample attributes of PRJEB51212 could not be fetched (network unavailable); rounds are parsed from titles and library names only.")
+    expect_null(conditionCall(observed_warning))
     expect_identical(enriched$runs$sample_attributes[[1L]], character())
     expect_identical(.fetch_plan(enriched)$round_number, 2L)
 })
